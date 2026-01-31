@@ -1,0 +1,249 @@
+/* Estilos globales (mantener solo uno) */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+html, body {
+  overflow-x: hidden;
+  height: 100vh;
+  background-color: #121212;
+  color: white;
+}
+/* Estilos del header moderno */
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  height: 80px;
+  border-bottom: 2px solid #ff4da6;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-img {
+  height: 50px;
+  width: 50px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 5px rgba(255, 77, 166, 0.7));
+  transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+  transform: rotate(15deg);
+}
+
+.logo-text {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 1.5rem;
+  background: linear-gradient(45deg, #00bcd4, #ff4da6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+}
+
+.logo-highlight {
+  color: #ff4da6;
+  -webkit-text-fill-color: #ff4da6;
+}
+
+.nav-container {
+  display: flex;
+  position: relative;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e0e0e0;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link i {
+  font-size: 1.1rem;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+}
+
+.nav-link.active {
+  color: #ff4da6;
+  font-weight: 600;
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: -10px;
+  height: 3px;
+  background: linear-gradient(90deg, #00bcd4, #ff4da6);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-action-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-action-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Efecto hover para los enlaces */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00bcd4, #ff4da6);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.nav-link.active::after {
+  width: 100%;
+  background: #ff4da6;
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+  .main-header {
+    padding: 0 1rem;
+  }
+  
+  .menu-toggle {
+    display: block;
+  }
+  
+  .nav-container {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0 2rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-150%);
+    transition: transform 0.4s ease;
+    z-index: 999;
+  }
+  
+  .nav-container.active {
+    transform: translateY(0);
+  }
+  
+  .nav-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .nav-indicator {
+    display: none;
+  }
+  
+  .nav-actions {
+    border-left: none;
+    padding-left: 0;
+    margin-left: 0;
+  }
+}
+
+/* Tema claro */
+.light-theme .main-header {
+  background: linear-gradient(135deg, #ffffff, #f0f0f0);
+  border-bottom-color: #00bcd4;
+}
+
+.light-theme .logo-text {
+  background: linear-gradient(45deg, #007bff, #00bcd4);
+}
+
+.light-theme .nav-link {
+  color: #555555;
+}
+
+.light-theme .nav-link:hover,
+.light-theme .nav-link.active {
+  color: #007bff;
+}
+
+.light-theme .nav-action-btn {
+  background: rgba(0, 0, 0, 0.05);
+  color: #555555;
+}
+
+.light-theme .nav-action-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #007bff;
+}

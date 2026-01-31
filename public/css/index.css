@@ -1,0 +1,587 @@
+/* Estilos globales y de reseteo */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+main {
+  margin-top: 80px; /* Igual a la altura del header */
+  padding-top: 1rem; /* Espacio adicional si lo deseas */
+}
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto !important;
+  height: 100vh;
+  background-color: #121212;
+  color: white;
+}
+
+/* Estilos generales del contenedor y botones */
+.container {
+  padding: 40px;
+  text-align: center;
+}
+
+.input-section {
+  margin: 20px 0;
+}
+
+input[type="text"] {
+  padding: 10px;
+  width: 200px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 10px 15px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff4da6;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 1s ease;
+}
+
+button:hover {
+  background-color: #ff4081;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+li {
+  background-color: #333;
+  margin: 5px auto;
+  padding: 10px;
+  border-radius: 8px;
+  width: 300px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li button {
+  background-color: red;
+  padding: 5px 10px;
+}
+
+li button:hover {
+  background-color: rgb(214, 2, 2);
+  transition: background-color 1s ease;
+}
+
+.girar {
+  background-color: #03a9f4;
+  font-size: 18px;
+}
+
+.girar:hover {
+  transition: background-color ease 1s;
+  background-color: #0289c8;
+}
+
+#resultado {
+  margin-top: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4caf50;
+}
+
+/* Estilos del formulario de fases */
+#faseForm {
+  background: linear-gradient(270deg, #33caff, #ff4da6, #33caff);
+  background-size: 600% 600%;
+  animation: gradientAnim 12s ease infinite;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(255, 77, 166, 0.4);
+  margin-bottom: 2rem;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+@keyframes gradientAnim {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#faseForm h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  text-shadow: 0 0 5px #fff;
+  letter-spacing: 1px;
+}
+
+#faseForm label {
+  display: inline-block;
+  width: 100px;
+  font-weight: 600;
+  margin-right: 1rem;
+  color: #e0f7fa;
+  text-shadow: 0 0 3px #00bcd4;
+}
+
+#faseForm input[type="text"] {
+  width: 220px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  background-color: #0a192f;
+  color: #e0f7fa;
+  font-weight: 600;
+  box-shadow: inset 0 0 6px #00bcd4;
+}
+
+#faseForm input[type="text"]:focus {
+  outline: none;
+  border-color: #ff4da6;
+  box-shadow: 0 0 12px #ff4da6, inset 0 0 10px #00bcd4;
+}
+
+#faseForm button {
+  margin-top: 1.2rem;
+  background: linear-gradient(90deg, #00bcd4, #ff4da6);
+  border: none;
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 0 15px #ff4da6;
+  transition: box-shadow 0.4s ease, transform 0.2s ease;
+  user-select: none;
+}
+
+#faseForm button:hover {
+  box-shadow: 0 0 25px #00bcd4, 0 0 35px #ff4da6;
+  transform: scale(1.05);
+}
+
+/* Títulos */
+main h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+main h3 {
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 900;
+  font-size: 1.8rem;
+  background-color: white;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: textGlow 3s ease-in-out infinite alternate;
+}
+
+/* Estilos de la tabla de fútbol */
+.tabla-futbol {
+  width: 100%;
+  max-width: 1000px;
+  border-collapse: collapse;
+  margin: 40px auto;
+  background-color: #1e1e2f;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(255, 77, 166, 0.2);
+}
+
+.tabla-futbol thead {
+  background: linear-gradient(90deg, #00bcd4, #ff4da6);
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+.tabla-futbol th,
+.tabla-futbol td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+.tabla-futbol tbody tr:hover {
+  background-color: #2c2c3e;
+  transition: background-color 0.3s ease;
+}
+
+.tabla-futbol input[type="number"] {
+  width: 45px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #03a9f4;
+  background-color: #0a192f;
+  color: #fff;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: inset 0 0 5px #00bcd4;
+}
+
+.tabla-futbol input[type="number"]:focus {
+  outline: none;
+  border-color: #ff4da6;
+  box-shadow: 0 0 8px #ff4da6;
+}
+
+.tabla-futbol button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #00bcd4, #ff4da6);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 8px #ff4da6;
+  transition: transform 0.2s ease;
+}
+
+.tabla-futbol button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px #00bcd4;
+}
+
+/* Fase Headers y Botones */
+.fase-header {
+  margin-top: 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.2rem 0;
+  margin-bottom: 1rem;
+}
+
+.fase-actions {
+  display: flex;
+  gap: 12px;
+  margin-left: 1rem;
+  z-index: 2;
+}
+
+.fase-titulo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  font-weight: 700;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 1px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.btn-clean {
+  border: 1px solid #666;
+  background: transparent;
+  color: #e0e0e0;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-clean:hover {
+  background-color: #222;
+  border-color: #ff4da6;
+  color: white;
+}
+
+.btn-clean.danger {
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+}
+
+.btn-clean.danger:hover {
+  background-color: #300;
+  color: white;
+}
+
+/* Estilos del reproductor de música */
+footer#musicPlayerSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1000;
+}
+
+.music-card {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1a2d, #2a2a4a);
+  color: white;
+  border-radius: 20px;
+  padding: 20px;
+  gap: 20px;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  max-width: 550px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: visible;
+}
+
+.music-card:hover {
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.7);
+}
+
+.music-card img {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+}
+
+.music-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  position: relative;
+}
+
+.music-info h4 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #a0e6ff;
+  text-shadow: 0 0 8px rgba(160, 230, 255, 0.5);
+}
+
+/* Estilos para el select personalizado */
+.custom-select {
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.selected-option {
+  background: #292949;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.selected-option:hover {
+  background: #3a3a5a;
+}
+
+.selected-option::after {
+  content: '▼';
+  font-size: 12px;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.custom-select.active .selected-option::after {
+  transform: rotate(180deg);
+}
+
+.options-list {
+  list-style: none;
+  padding: 0;
+  margin: 5px 0 0 0;
+  background: #292949;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 1002;
+}
+
+.custom-select.active .options-list {
+  opacity: 1;
+  visibility: visible;
+}
+
+.options-list li {
+  padding: 10px 12px;
+  color: #e0f7fa;
+  cursor: pointer;
+  border-bottom: 1px solid #1a1a2d;
+  transition: background-color 0.2s ease;
+  width: auto;
+  margin: 0;
+  border-radius: 0;
+}
+
+.options-list li:last-child {
+  border-bottom: none;
+}
+
+.options-list li:hover {
+  background-color: #3a3a5a;
+}
+
+.music-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.music-controls button {
+  background: linear-gradient(135deg, #3f3f75, #5c5c9a);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.music-controls button:hover {
+  background: linear-gradient(135deg, #5c5c9a, #3f3f75);
+  box-shadow: 0 0 12px #00bcd4;
+  transform: scale(1.05);
+}
+
+#visualizer {
+  margin-top: 30px;
+  display: block;
+  background-color: #0a0a1a;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.4);
+  border: 2px solid #00bcd4;
+  max-width: 550px;
+  width: 100%;
+  height: 120px;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  transition: opacity 0.5s ease-in-out, height 0.5s ease-in-out;
+}
+
+#visualizer.visible {
+  opacity: 1;
+  height: 120px;
+}
+
+/* Botones modernos de COPA y LIGA */
+#tournamentButtons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+#tournamentButtons > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#tournamentButtons h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+  text-shadow: 0 0 5px #00bcd4;
+}
+
+.modern-button {
+  display: inline-block;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #fff;
+  text-decoration: none;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  border: 2px solid transparent;
+}
+
+.modern-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #00bcd4, #ff4da6, #00bcd4);
+  background-size: 300% 100%;
+  z-index: -1;
+  transition: background-position 0.4s ease-in-out;
+  border-radius: inherit;
+}
+
+.modern-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4), 0 4px 12px rgba(255, 77, 166, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.modern-button:hover::before {
+  background-position: 100% 50%;
+}
+
+.liga-button::before {
+  background: linear-gradient(45deg, #4caf50, #8bc34a, #4caf50);
+  background-size: 300% 100%;
+}
+
+.liga-button:hover {
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Separador moderno con animación */
+.styled-separator {
+  border: 0;
+  height: 4px;
+  margin: 2rem auto;
+  width: 85%;
+  background: linear-gradient(90deg, #ff4da6, #00bcd4, #ff4da6);
+  background-size: 200% 200%;
+  border-radius: 50px;
+  animation: separatorFlow 5s ease infinite;
+  box-shadow: 0 0 12px rgba(255, 77, 166, 0.5), 0 0 18px rgba(0, 188, 212, 0.4);
+}
+
+/* Animación de flujo del HR */
+@keyframes separatorFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

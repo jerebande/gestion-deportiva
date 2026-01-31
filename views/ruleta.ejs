@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ruleta</title>
+  <link rel="stylesheet" href="/public/css/ruleta.css">
+  <link rel="stylesheet" href="/public/css/common.css"> 
+  <link rel="stylesheet" href="/public/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+header.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    height: 80px;
+    border-bottom: 2px solid #ff4da6;
+}
+html, body {
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: scroll !important; /* Fuerza la barra de scroll visible */
+    margin: 0 !important;
+}
+
+body {
+    margin-top: 80px !important; /* Para que el contenido no quede tapado por el header */
+    overflow: visible !important;
+}
+main, .container {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+</style>
+</head>
+<body>
+<header class="main-header">
+  <div class="logo-container">
+    <img src="/public/images/pescado.png" class="logo-img" alt="Logo">
+  </div>
+  
+  <div class="nav-container">
+    <nav class="main-nav">
+      <div class="nav-links">
+        <a href="/home" class="nav-link">
+          <i class="fas fa-gamepad"></i>
+          <span>JUGAR</span>
+        </a>
+        <a href="/participantes" class="nav-link">
+          <i class="fas fa-users"></i>
+          <span>INTEGRANTES</span>
+        </a>
+        <a href="/apuestas" class="nav-link">
+          <i class="fas fa-coins"></i>
+          <span>APUESTAS</span>
+        </a>
+        <a href="/ruleta" class="nav-link active">
+          <i class="fas fa-dice"></i>
+          <span>RULETA</span>
+        </a>
+      </div>
+      
+      
+    </nav>
+    
+    <div class="nav-indicator"></div>
+  </div>
+  
+  <button class="menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+</header>
+
+  <main class="container">
+    <h1>Ruleta aleatoria </h1>
+
+    <div class="input-section">
+      <input type="text" id="opcionInput" placeholder="Agregar opción..." />
+      <button onclick="agregarOpcion()">Agregar</button>
+    </div>
+
+    <ul id="listaOpciones"></ul>
+
+    <button class="girar" onclick="girarRuleta()">GIRAR RULETA</button>
+
+    <div id="resultado"></div>
+  </main>
+
+  <script src="/public/js/ruleta.js"></script>
+  <script>
+    // Script para manejar el menú móvil y efectos interactivos
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const navContainer = document.querySelector('.nav-container');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const navIndicator = document.querySelector('.nav-indicator');
+      
+      // Toggle menú móvil
+      mobileMenuToggle.addEventListener('click', () => {
+        navContainer.classList.toggle('active');
+      });
+      
+      // Efecto indicador de navegación
+      function moveIndicator(element) {
+        if (element) {
+          const linkRect = element.getBoundingClientRect();
+          const navRect = document.querySelector('.nav-links').getBoundingClientRect();
+          
+          navIndicator.style.width = `${linkRect.width}px`;
+          navIndicator.style.left = `${linkRect.left - navRect.left}px`;
+          navIndicator.style.opacity = '1';
+        }
+      }
+      
+      // Inicializar indicador en el enlace activo
+      const activeLink = document.querySelector('.nav-link.active');
+      moveIndicator(activeLink);
+      
+      // Mover indicador al hacer hover
+      navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+          moveIndicator(link);
+        });
+        
+        link.addEventListener('mouseleave', () => {
+          moveIndicator(activeLink);
+        });
+        
+        link.addEventListener('click', () => {
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          moveIndicator(link);
+          
+          // Cerrar menú móvil al seleccionar una opción
+          if (window.innerWidth <= 768) {
+            navContainer.classList.remove('active');
+          }
+        });
+      });
+      
+      // Toggle tema oscuro/claro
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        const icon = themeToggle.querySelector('i');
+        if (document.body.classList.contains('light-theme')) {
+          icon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+          icon.classList.replace('fa-sun', 'fa-moon');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

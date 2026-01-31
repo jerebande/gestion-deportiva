@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Jugar</title>
+  <link rel="stylesheet" href="/public/css/ruleta.css">
+  <link rel="stylesheet" href="/public/css/common.css"> 
+  <link rel="stylesheet" href="/public/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+header.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    height: 80px;
+    border-bottom: 2px solid #ff4da6;
+}
+html, body {
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+}
+
+body {
+    margin-top: 80px !important; /* Para que el contenido no quede tapado por el header */
+    overflow: visible !important;
+}
+
+main, .container, .card {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+</style>
+</head>
+<body>
+<header class="main-header">
+  <div class="logo-container">
+    <img src="/public/images/pescado.png" class="logo-img" alt="Logo">
+  </div>
+  
+  <div class="nav-container">
+    <nav class="main-nav">
+      <div class="nav-links">
+        <a href="/home" class="nav-link active">
+          <i class="fas fa-gamepad"></i>
+          <span>JUGAR</span>
+        </a>
+        <a href="/participantes" class="nav-link">
+          <i class="fas fa-users"></i>
+          <span>INTEGRANTES</span>
+        </a>
+        <a href="/apuestas" class="nav-link">
+          <i class="fas fa-coins"></i>
+          <span>APUESTAS</span>
+        </a>
+        <a href="/ruleta" class="nav-link ">
+          <i class="fas fa-dice"></i>
+          <span>RULETA</span>
+        </a>
+      </div>
+      
+      
+    </nav>
+    
+    <div class="nav-indicator"></div>
+  </div>
+  
+  <button class="menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+  </button>
+</header>
+
+  <main style="padding: 2rem;">
+                                                                                                                                                     
+ <section id="tournamentButtons" style="margin-bottom: 2rem; text-align: center; display: flex; justify-content: center; gap: 20px; align-items: center;">
+ <div>
+  <h2>JUGAR COPA</h2>
+  <a href="/copa" class="modern-button copa-button">COPA 🏅</a>
+ </div>
+ <div>
+  <h2>JUGAR LIGA</h2>
+  <a href="/liga" class="modern-button liga-button">LIGA</a>
+ </div>
+</section>
+
+<hr class="styled-separator">
+    <h2>CREAR TORNEO</h2>
+    <form id="faseForm" action="/integrantes/crear-fases" method="POST">
+      <label for="cantidadFases">Cantidad de fases:</label>
+      <input type="number" name="cantidadFases" id="cantidadFases" required>
+
+      <label for="jugadoresPorFase">Jugadores por fase:</label>
+      <input type="number" name="jugadoresPorFase" id="jugadoresPorFase" required>
+
+      <button type="button" onclick="generarCampos()">Continuar</button>
+                                                                                          
+      <div id="jugadoresInputs"></div>
+
+      <button type="submit" style="margin-top: 1rem;">Crear fases</button>
+    </form>
+
+    <% if (fases && fases.length > 0) { %>
+      <hr>
+      <% fases.forEach((fase, i) => { %>
+        <section>
+          <div class="fase-header">
+            <div class="fase-actions">
+              <form action="/integrantes/eliminar-fase/<%= i + 1 %>" method="POST">
+                <button type="submit" title="Eliminar Fase" class="btn-clean danger" onclick="return confirm('¿Eliminar Fase <%= i + 1 %>?')">Eliminar</button>
+              </form>
+              <a href="/cuartos" title="Ver Cuartos de Final"><button class="btn-clean">Cuartos</button></a>
+              <a href="/semifinales" title="Ver Semifinales"><button class="btn-clean">Semifinales</button></a>
+            </div>
+            <h3 class="fase-titulo">Fase <%= i + 1 %></h3>
+          </div>
+
+          <ul>
+            <% fase.forEach(jugador => { %>
+              <li><%= jugador.nombre %></li>
+            <% }); %>
+          </ul>
+
+          <table class="tabla-futbol">
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                <th>PJ</th>
+                <th>PG</th>
+                <th>PE</th>
+                <th>PP</th>
+                <th>GF</th>
+                <th>GC</th>
+                <th>DG</th>
+                <th>PTS</th>
+                <th>Editar</th>
+              </tr>
+            </thead>
+           <tbody>
+  <% fase.forEach(j => { %>
+  <tr>
+    <td><%= j.nombre %></td>
+    <td><span class="pj-display"><%= j.partidos_jugados %></span></td>
+    <td>
+      <input
+        type="number"
+        name="pg"
+        value="<%= j.partidos_ganados %>"
+        data-player-id="<%= j.id %>"
+        data-stat="pg"
+        min="0"
+      />
+    </td>
+    <td>
+      <input
+        type="number"
+        name="pe"
+        value="<%= j.partidos_empatados %>"
+        data-player-id="<%= j.id %>"
+        data-stat="pe"
+        min="0"
+      />
+    </td>
+    <td>
+      <input
+        type="number"
+        name="pp"
+        value="<%= j.partidos_perdidos %>"
+        data-player-id="<%= j.id %>"
+        data-stat="pp"
+        min="0"
+      />
+    </td>
+    <td>
+      <input
+        type="number"
+        name="gf"
+        value="<%= j.goles_a_favor %>"
+        data-player-id="<%= j.id %>"
+        data-stat="gf"
+        min="0"
+      />
+    </td>
+    <td>
+      <input
+        type="number"
+        name="gc"
+        value="<%= j.goles_en_contra %>"
+        data-player-id="<%= j.id %>"
+        data-stat="gc"
+        min="0"
+      />
+    </td>
+    <td><span class="dg-display"><%= j.diferencia_goles %></span></td>
+    <td><span class="pts-display"><%= j.puntos %></span></td>
+    <td>
+      <button
+        type="button"
+        class="update-stats-btn"
+        data-player-id="<%= j.id %>"
+      >
+        ✔
+      </button>
+    </td>
+  </tr>
+  <% }); %>
+</tbody>
+          </table>
+        </section>
+      <% }); %>
+    <% } %>
+  </main>
+
+  <footer id="musicPlayerSection">
+  <div class="music-card">
+    <img id="coverArt" src="/public/images/soda.jpeg" alt="Portada canción">
+    <div class="music-info">
+      <h4 id="songTitle">🎵 Cuando pase el temblor</h4>
+
+      <div class="custom-select" id="customSelect">
+        <div class="selected-option" id="selectedOption"></div>
+        <ul class="options-list" id="optionsList"></ul>
+      </div>
+      <div class="music-controls">
+        <button id="prevSong">⏮️ Anterior</button>
+        <button id="playPause" onclick="toggleMusic()">▶️ Escuchar</button>
+        <button id="nextSong">⏭️ Siguiente</button>
+      </div>
+      <!-- Barra de duración (ahora oculta por defecto) -->
+      <div class="progress-container" id="progressContainer" style="width:100%;margin-top:10px;cursor:pointer; display:none;">
+        <span id="currentTime" style="font-size:0.9em;">0:00</span>
+        <div id="progressBar" style="display:inline-block;width:70%;height:8px;background:#ddd;border-radius:4px;vertical-align:middle;position:relative;margin:0 10px;">
+          <div id="progress" style="height:100%;background:linear-gradient(270deg,#33caff,#33caff,#33caff);border-radius:4px;width:0%;transition:width 0.2s linear;"></div>
+        </div>
+        <span id="duration" style="font-size:0.9em;">0:00</span>
+      </div>
+    </div>
+  </div>
+  <canvas id="visualizer" width="500" height="100"></canvas>
+  <audio id="musicPlayer" src="public/sounds/temblor.mp3"></audio>
+</footer>
+
+  <script>
+    const player = document.getElementById("musicPlayer");
+    const playPauseBtn = document.getElementById("playPause");
+    const cover = document.getElementById("coverArt");
+    const title = document.getElementById("songTitle");
+    const visualizerCanvas = document.getElementById('visualizer');
+    const prevSongBtn = document.getElementById("prevSong");
+    const nextSongBtn = document.getElementById("nextSong");
+    // Barra de duración
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBar = document.getElementById('progressBar');
+    const progress = document.getElementById('progress');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+
+    let isPlaying = false;
+    let currentSongIndex = 0; // Para rastrear la canción actual
+
+    // Elementos del select personalizado
+    const customSelect = document.getElementById('customSelect');
+    const selectedOptionDiv = document.getElementById('selectedOption');
+    const optionsList = document.getElementById('optionsList');
+
+    // Datos de las canciones
+    const songs = [
+      { value: "temblor.mp3", title: "🎵 Cuando pase el temblor", cover: "public/images/soda.jpeg" },
+       { value: "pressure.mp3", title: "🎵 Under Pressure", cover: "public/images/pressure.jpeg" },
+      { value: "its-my-life.mp3", title: "🎵 It's My Life", cover: "/public/images/its-my-life.jpeg" },
+      { value: "sweet.mp3", title: " 🎵 Sweet Child O' Mine", cover: "/public/images/sweet.jpeg" },
+       { value: "Unforgiven .mp3", title: "🎵 the unforgiven ", cover: "public/images/enter.jpeg" },
+        { value: "iwasborn.mp3", title: "🎵 I Was Born To Love You", cover: "/public/images/iwasborn.jpeg" },
+        { value: "for.mp3", title: "🎵 For Whom The Bell Tolls", cover: "/public/images/for.jpeg" },
+          { value: "stopme.mp3", title: "🎵 Don't Stop Me Now", cover: "/public/images/stopme.jpeg" },
+       { value: "thunder.mp3", title: "🎵 Thunderstruck", cover: "/public/images/thunder.jpeg" },
+      { value: "radio.mp3", title: "🎵 Radio Ga Ga", cover: "/public/images/free.jpeg" },
+        { value: "touch.mp3", title: "🎵 Touch Too Much", cover: "/public/images/touch.jpeg" },
+       { value: "enter.mp3", title: "🎵 Enter Sandman", cover: "/public/images/enter.jpeg" },
+      { value: "dontletmedown.mp3", title: "🎵 Don't Let Me Down", cover: "/public/images/dontletmedown.jpeg" },
+      { value: "free.mp3", title: "🎵 I Want To Break Free", cover: "/public/images/free.jpeg" },
+      { value: "yougive.mp3", title: "🎵 You Give Love A Bad Name", cover: "/public/images/yougive.jpeg" },
+      { value: "come-as-you-are.mp3", title: "🎵 Come as You Are", cover: "/public/images/come-as-you-are.jpg" },
+      { value: "livin.mp3", title: "🎵 Livin' On A Prayer", cover: "/public/images/yougive.jpeg" },
+      { value: "paraiso.mp3", title: "🎵 Paradise City", cover: "/public/images/sweet.jpeg" },
+      { value: "canibales.mp3", title: "🎵 Entre Caníbales", cover: "/public/images/canibales.jpeg" },
+      { value: "musica.mp3", title: "🎵 De Música Ligera", cover: "/public/images/canibales.jpeg" },
+      { value: "another.mp3", title: "🎵 Another One Bites The Dust", cover: "/public/images/another.jpeg" },
+         { value: "air.mp3", title: "🎵 In The Air Tonight", cover: "/public/images/air.jpeg" },
+             { value: "final.mp3", title: "🎵 The Final Countdown", cover: "/public/images/final.jpeg" },
+             { value: "door.mp3", title: "🎵 Knockin' On Heaven's Door", cover: "/public/images/door.jpeg" },
+             { value: "noviembre.mp3", title: "🎵 November Rain", cover: "/public/images/noviembre.jpeg" },
+                  { value: "hells.mp3", title: "🎵 Hells Bells", cover: "/public/images/hells.jpeg" },
+                    { value: "river.mp3", title: "🎵 Back In Black - Live at River Plate Stadium", cover: "/public/images/river.jpeg" },
+                     { value: "loverboy.mp3", title: "🎵 Good Old-Fashioned Lover Boy ", cover: "/public/images/loverboy.jpeg" },
+      { value: "vitaminas.mp3", title: "🎵 Te Hacen Falta Vitaminas", cover: "/public/images/vitaminas.jpeg" }
+    ];
+
+    // Función para poblar el select personalizado
+    function populateSelect() {
+      optionsList.innerHTML = ''; // Limpiar opciones existentes
+      songs.forEach((song, index) => {
+        const li = document.createElement('li');
+        li.textContent = song.title;
+        li.setAttribute('data-index', index); // Guardar el índice
+        li.addEventListener('click', () => selectOption(index));
+        optionsList.appendChild(li);
+      });
+
+      // Establecer la primera canción como la seleccionada por defecto al cargar
+      if (songs.length > 0) {
+        loadSong(0); // Carga la primera canción
+      }
+    }
+
+    // Inicializar el select al cargar la página
+    document.addEventListener('DOMContentLoaded', populateSelect);
+
+    // Toggle para mostrar/ocultar las opciones del select personalizado
+    customSelect.addEventListener('click', (event) => {
+      event.stopPropagation();
+      customSelect.classList.toggle('active');
+    });
+
+    // Cierra el select si se hace clic fuera
+    document.addEventListener('click', (event) => {
+      if (!customSelect.contains(event.target)) {
+        customSelect.classList.remove('active');
+      }
+    });
+
+    // Función para seleccionar una opción del select personalizado
+    function selectOption(index) {
+      currentSongIndex = index;
+      loadSong(currentSongIndex);
+      customSelect.classList.remove('active'); // Cierra el desplegable
+      if (isPlaying) { // Si la música estaba sonando, la reproduce inmediatamente
+        player.play();
+        playPauseBtn.textContent = "⏸️ Pausar";
+        visualizerCanvas.classList.add('visible');
+      }
+    }
+
+    // Función para cargar una canción
+    function loadSong(index) {
+      const song = songs[index];
+      player.src = `/public/sounds/${song.value}`;
+      cover.src = song.cover;
+      title.textContent = song.title;
+      selectedOptionDiv.textContent = song.title; // Actualiza el texto visible del select
+    }
+
+    function toggleMusic() {
+      if (isPlaying) {
+        player.pause();
+        playPauseBtn.textContent = "▶️ Escuchar";
+        visualizerCanvas.classList.remove('visible');
+        progressContainer.style.display = "none"; // Oculta la barra al pausar
+      } else {
+        player.play();
+        playPauseBtn.textContent = "⏸️ Pausar";
+        visualizerCanvas.classList.add('visible');
+        progressContainer.style.display = "block"; // Muestra la barra al reproducir
+      }
+      isPlaying = !isPlaying;
+    }
+
+    player.addEventListener('play', () => {
+      progressContainer.style.display = "block"; // Muestra la barra al iniciar reproducción
+    });
+
+    player.addEventListener('pause', () => {
+      progressContainer.style.display = "none"; // Oculta la barra al pausar
+    });
+
+    player.addEventListener('ended', () => {
+      progressContainer.style.display = "none"; // Oculta la barra al terminar
+    });
+
+    // Reproducción aleatoria al finalizar la canción
+    player.onended = () => {
+      isPlaying = false;
+      playPauseBtn.textContent = "▶️ Escuchar";
+      visualizerCanvas.classList.remove('visible');
+
+      // Reproducir siguiente canción aleatoriamente
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * songs.length);
+      } while (nextIndex === currentSongIndex && songs.length > 1); // Evitar la misma canción si hay más de una
+
+      currentSongIndex = nextIndex;
+      loadSong(currentSongIndex);
+      player.play();
+      isPlaying = true;
+      playPauseBtn.textContent = "⏸️ Pausar";
+      visualizerCanvas.classList.add('visible');
+    };
+
+    // Botón "Anterior"
+    prevSongBtn.addEventListener('click', () => {
+      currentSongIndex--;
+      if (currentSongIndex < 0) {
+        currentSongIndex = songs.length - 1; // Volver al final si llega al principio
+      }
+      loadSong(currentSongIndex);
+      if (isPlaying) { // Si estaba reproduciendo, sigue reproduciendo
+        player.play();
+      } else { // Si estaba pausado, solo carga la canción
+        player.pause();
+        playPauseBtn.textContent = "▶️ Escuchar";
+        visualizerCanvas.classList.remove('visible');
+      }
+    });
+
+    // Botón "Siguiente"
+    nextSongBtn.addEventListener('click', () => {
+      currentSongIndex++;
+      if (currentSongIndex >= songs.length) {
+        currentSongIndex = 0; // Volver al principio si llega al final
+      }
+      loadSong(currentSongIndex);
+      if (isPlaying) { // Si estaba reproduciendo, sigue reproduciendo
+        player.play();
+      } else { // Si estaba pausado, solo carga la canción
+        player.pause();
+        playPauseBtn.textContent = "▶️ Escuchar";
+        visualizerCanvas.classList.remove('visible');
+      }
+    });
+
+    // Visualizer
+    const canvas = document.getElementById('visualizer');
+    const ctx = canvas.getContext('2d');
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 64;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    let source;
+
+    function setupVisualizer() {
+      if (!source) {
+        source = audioCtx.createMediaElementSource(player);
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+      }
+      draw();
+    }
+
+    function draw() {
+      if (isPlaying && visualizerCanvas.classList.contains('visible')) {
+        requestAnimationFrame(draw);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
+        return; // Salir del bucle de animación
+      }
+
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = canvas.width / bufferLength;
+      let x = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i] * 0.7;
+        const hue = i * 10;
+        ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+        x += barWidth;
+      }
+    }
+
+    player.addEventListener('play', () => {
+      audioCtx.resume().then(() => {
+        setupVisualizer();
+        visualizerCanvas.classList.add('visible'); // Asegura que se muestre al iniciar la reproducción
+      });
+    });
+
+    player.addEventListener('pause', () => {
+        visualizerCanvas.classList.remove('visible'); // Asegura que se oculte al pausar
+    });
+
+    player.addEventListener('ended', () => {
+        visualizerCanvas.classList.remove('visible'); // Asegura que se oculte al terminar
+    });
+
+    // Actualiza la barra y tiempos
+    player.addEventListener('timeupdate', () => {
+    const percent = (player.currentTime / player.duration) * 100;
+    progress.style.width = percent + '%';
+    currentTimeSpan.textContent = formatTime(player.currentTime);
+    durationSpan.textContent = formatTime(player.duration);
+  });
+
+  // Permite adelantar/retroceder tocando la barra
+  progressBar.addEventListener('click', function(e) {
+    const rect = progressBar.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+    player.currentTime = percent * player.duration;
+  });
+
+  // Actualiza duración al cargar metadata
+  player.addEventListener('loadedmetadata', () => {
+    durationSpan.textContent = formatTime(player.duration);
+  });
+
+  function formatTime(sec) {
+    if (isNaN(sec)) return "0:00";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" + s : s);
+  }
+  </script>
+
+  <script>
+    function generarCampos() {
+      const fases = parseInt(document.getElementById("cantidadFases").value);
+      const jugadores = parseInt(document.getElementById("jugadoresPorFase").value);
+      const contenedor = document.getElementById("jugadoresInputs");
+
+      contenedor.innerHTML = "";
+
+      for (let i = 1; i <= fases; i++) {
+        const grupo = document.createElement("div");
+        grupo.innerHTML = `<h4>Fase ${i}</h4>`;
+        for (let j = 1; j <= jugadores; j++) {
+          grupo.innerHTML += `
+            <label>Jugador ${j}:</label>
+            <input type="text" name="nombresFase${i}[]" required>
+          `;
+        }
+        contenedor.appendChild(grupo);
+      }
+    }
+  </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tableBodies = document.querySelectorAll('.tabla-futbol tbody');
+
+    tableBodies.forEach(tbody => {
+      tbody.addEventListener('input', (event) => {
+        const target = event.target;
+        // Check if the input is one of the editable stats
+        if (['pg', 'pe', 'pp', 'gf', 'gc'].includes(target.dataset.stat)) {
+          const row = target.closest('tr');
+          updatePlayerStats(row);
+        }
+      });
+
+      tbody.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (target.classList.contains('update-stats-btn')) {
+          const row = target.closest('tr');
+          const playerId = target.dataset.playerId;
+          const updatedStats = collectRowStats(row);
+
+          try {
+            const response = await fetch(`/integrantes/actualizar-estadisticas/${playerId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(updatedStats)
+            });
+
+            if (response.ok) {
+              alert('Estadísticas actualizadas correctamente!');
+              // Optionally, refresh the page or update the UI
+              // window.location.reload();
+            } else {
+              alert('Error al actualizar estadísticas.');
+            }
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Error de conexión al actualizar estadísticas.');
+          }
+        }
+      });
+    });
+
+    function updatePlayerStats(row) {
+      const pgInput = row.querySelector('[data-stat="pg"]');
+      const peInput = row.querySelector('[data-stat="pe"]');
+      const ppInput = row.querySelector('[data-stat="pp"]');
+      const gfInput = row.querySelector('[data-stat="gf"]');
+      const gcInput = row.querySelector('[data-stat="gc"]');
+
+      const pjDisplay = row.querySelector('.pj-display');
+      const dgDisplay = row.querySelector('.dg-display');
+      const ptsDisplay = row.querySelector('.pts-display');
+
+      const pg = parseInt(pgInput.value) || 0;
+      const pe = parseInt(peInput.value) || 0;
+      const pp = parseInt(ppInput.value) || 0;
+      const gf = parseInt(gfInput.value) || 0;
+      const gc = parseInt(gcInput.value) || 0;
+
+      // Calculate PJ
+      const pj = pg + pe + pp;
+      pjDisplay.textContent = pj;
+
+      // Calculate DG
+      const dg = gf - gc;
+      dgDisplay.textContent = dg;
+
+      // Calculate PTS (3 for win, 1 for tie)
+      const pts = (pg * 3) + (pe * 1);
+      ptsDisplay.textContent = pts;
+    }
+
+    function collectRowStats(row) {
+      const stats = {};
+      const inputs = row.querySelectorAll('input[data-stat]');
+      inputs.forEach(input => {
+        stats[input.dataset.stat] = parseInt(input.value) || 0;
+      });
+
+      // Include calculated values as well for sending to the server
+      stats.pj = parseInt(row.querySelector('.pj-display').textContent) || 0;
+      stats.dg = parseInt(row.querySelector('.dg-display').textContent) || 0;
+      stats.pts = parseInt(row.querySelector('.pts-display').textContent) || 0;
+
+      return stats;
+    }
+
+    // Initialize stats display on page load
+    document.querySelectorAll('.tabla-futbol tbody tr').forEach(row => {
+      updatePlayerStats(row);
+    });
+  });
+</script>
+<script>
+    // Script para manejar el menú móvil y efectos interactivos
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+      const navContainer = document.querySelector('.nav-container');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const navIndicator = document.querySelector('.nav-indicator');
+      
+      // Toggle menú móvil
+      mobileMenuToggle.addEventListener('click', () => {
+        navContainer.classList.toggle('active');
+      });
+      
+      // Efecto indicador de navegación
+      function moveIndicator(element) {
+        if (element) {
+          const linkRect = element.getBoundingClientRect();
+          const navRect = document.querySelector('.nav-links').getBoundingClientRect();
+          
+          navIndicator.style.width = `${linkRect.width}px`;
+          navIndicator.style.left = `${linkRect.left - navRect.left}px`;
+          navIndicator.style.opacity = '1';
+        }
+      }
+      
+      // Inicializar indicador en el enlace activo
+      const activeLink = document.querySelector('.nav-link.active');
+      moveIndicator(activeLink);
+      
+      // Mover indicador al hacer hover
+      navLinks.forEach(link => {
+        link.addEventListener('mouseenter', () => {
+          moveIndicator(link);
+        });
+        
+        link.addEventListener('mouseleave', () => {
+          moveIndicator(activeLink);
+        });
+        
+        link.addEventListener('click', () => {
+          navLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          moveIndicator(link);
+          
+          // Cerrar menú móvil al seleccionar una opción
+          if (window.innerWidth <= 768) {
+            navContainer.classList.remove('active');
+          }
+        });
+      });
+      
+      // Toggle tema oscuro/claro
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-theme');
+        const icon = themeToggle.querySelector('i');
+        if (document.body.classList.contains('light-theme')) {
+          icon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+          icon.classList.replace('fa-sun', 'fa-moon');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

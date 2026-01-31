@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Final Épica Espacial</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Orbitron:wght@700&display=swap');
+
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #0a001f;
+      color: #c8d6ff; /* azul claro */
+      user-select: none;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* CAPAS DE FONDO PARA INMERSIÓN */
+    #nebulaCanvas, #starsCanvas, #galaxiesCanvas, #smokeCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      pointer-events: none;
+      z-index: 0;
+    }
+    #smokeCanvas {
+      z-index: 5; /* encima de nebulosa, debajo contenido */
+    }
+    #starsCanvas {
+      z-index: 1;
+    }
+    #galaxiesCanvas {
+      z-index: 2;
+      opacity: 0.3;
+    }
+    #nebulaCanvas {
+      z-index: 0;
+    }
+
+    main.container {
+      position: relative;
+      z-index: 10;
+      background: rgba(25, 25, 50, 0.95);
+      border-radius: 12px;
+      padding: 2.5rem 3rem;
+      max-width: 540px;
+      width: 100%;
+      box-shadow:
+        0 4px 15px rgba(30, 50, 100, 0.3);
+      backdrop-filter: blur(8px);
+      text-align: center;
+      user-select: text;
+      border: 1.5px solid rgba(130, 150, 190, 0.3);
+      transition: box-shadow 0.3s ease;
+    }
+    main.container:hover {
+      box-shadow:
+        0 6px 30px rgba(50, 90, 180, 0.45);
+    }
+
+    h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 2.8rem;
+      color: #9bbdff;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+      user-select: none;
+      text-shadow: none;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.8rem;
+    }
+
+    .match-card {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      background: rgba(30, 30, 60, 0.9);
+      border-radius: 10px;
+      padding: 1.4rem 1.8rem;
+      box-shadow:
+        0 0 8px rgba(100, 120, 180, 0.2);
+      transition: box-shadow 0.3s ease;
+      border: 1px solid rgba(130, 150, 190, 0.15);
+    }
+    .match-card:hover {
+      box-shadow:
+        0 0 18px rgba(120, 160, 220, 0.35);
+    }
+
+    .match-card div {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #a3b1dc;
+      text-align: center;
+      user-select: text;
+      transition: color 0.3s ease;
+    }
+    .match-card div:first-child {
+      text-align: right;
+    }
+    .match-card div:last-child {
+      text-align: left;
+    }
+
+    .score-inputs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 0 1rem;
+    }
+
+    .score-inputs input[type="number"] {
+      width: 56px;
+      height: 42px;
+      border-radius: 8px;
+      border: 1.8px solid #9bbdffcc;
+      background-color: #20204a;
+      color: #d1dbff;
+      font-weight: 700;
+      font-size: 1.15rem;
+      text-align: center;
+      box-shadow: none;
+      transition:
+        border-color 0.3s ease,
+        background-color 0.3s ease;
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
+    }
+
+    .score-inputs input[type="number"]::-webkit-inner-spin-button,
+    .score-inputs input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .score-inputs span {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #9bbdffcc;
+      user-select: none;
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #a3b1dc;
+      background-color: #313766;
+      color: #e0e8ff;
+      transform: scale(1.05);
+      transition: all 0.25s ease;
+    }
+
+    button {
+      padding: 14px 0;
+      background: #3a4a9a;
+      border: none;
+      border-radius: 20px;
+      color: #d0d8ff;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      box-shadow: 0 4px 12px rgba(58, 74, 154, 0.8);
+      transition:
+        background-color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
+    }
+    #meteorCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      pointer-events: auto;
+      z-index: 4;
+      cursor: crosshair;
+    }
+
+    main.container {
+      box-shadow:
+        0 0 40px rgba(90, 120, 255, 0.55),
+        inset 0 0 35px rgba(110, 90, 200, 0.45);
+      border: 2px solid rgba(130, 150, 255, 0.25);
+    }
+
+    button:hover {
+      background-color: #5b6ec8;
+      box-shadow:
+        0 6px 20px rgba(91, 110, 200, 0.9);
+      transform: scale(1.08);
+    }
+
+    /* === ESTILOS PARA PENALES === */
+    .penalty-inputs-wrapper {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        padding-top: 15px;
+        border-top: 1px solid #3a3a5a;
+        margin-top: 15px;
+    }
+
+    .penalty-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .penalty-inputs input[type="number"] {
+      width: 55px;
+      height: 45px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1.8px solid #9bbdffcc;
+      background-color: #20204a;
+      color: #d1dbff;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 0;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="nebulaCanvas"></canvas>
+  <canvas id="smokeCanvas"></canvas>
+  <canvas id="starsCanvas"></canvas>
+  <canvas id="galaxiesCanvas"></canvas>
+  <canvas id="meteorCanvas"></canvas>
+
+  <main class="container" aria-label="Final match">
+    <h2>FINAL</h2>
+    <form method="POST" action="/final" aria-describedby="final-desc">
+      <div id="final-desc" style="position:absolute; left:-9999px; height:1px; width:1px; overflow:hidden;">
+        Ingrese goles de los finalistas y finalice el partido.
+      </div>
+
+      <div class="match-card" role="group" aria-labelledby="matchup">
+        <div aria-label="Jugador 1"><%= finalistas[0].nombre %></div>
+
+        <div class="score-inputs" role="presentation">
+          <input type="number" name="goles1" min="0" max="99" required aria-label="Goles <%= finalistas[0].nombre %>" oninput="checkTie()" />
+          <span aria-hidden="true">-</span>
+          <input type="number" name="goles2" min="0" max="99" required aria-label="Goles <%= finalistas[1].nombre %>" oninput="checkTie()" />
+        </div>
+
+        <div aria-label="Jugador 2"><%= finalistas[1].nombre %></div>
+
+        <div class="penalty-inputs-wrapper" id="penales-final" style="display: none;">
+          <div class="penalty-inputs">
+            <input type="number" name="penales1" min="0" aria-label="Penales <%= finalistas[0].nombre %>">
+            <span>-</span>
+            <input type="number" name="penales2" min="0" aria-label="Penales <%= finalistas[1].nombre %>">
+          </div>
+        </div>
+      </div>
+       
+      <button type="submit" aria-live="polite" aria-label="Finalizar partido">Finalizar Partido</button>
+    </form>
+  </main>
+
+  <audio autoplay>
+    <source src="/public/audio/SpotiMate.io - In the End - Linkin Park.mp3" type="audio/mpeg" />
+    Tu navegador no soporta audio HTML5.
+  </audio>
+
+  <script>
+    // === FUNCIÓN PARA MANEJAR DESEMPATE POR PENALES ===
+    function checkTie() {
+      const goles1Input = document.querySelector('input[name="goles1"]');
+      const goles2Input = document.querySelector('input[name="goles2"]');
+      const penalesDiv = document.getElementById('penales-final');
+      const penalesInputs = penalesDiv.querySelectorAll('input');
+
+      const goles1 = goles1Input.value;
+      const goles2 = goles2Input.value;
+
+      if (goles1 !== '' && goles2 !== '' && goles1 === goles2) {
+        penalesDiv.style.display = 'flex';
+        penalesInputs.forEach(input => input.required = true);
+      } else {
+        penalesDiv.style.display = 'none';
+        penalesInputs.forEach(input => {
+          input.required = false;
+          input.value = '';
+        });
+      }
+    }
+
+    // --- Animación de fondo y meteoritos ---
+
+    const nebulaCanvas = document.getElementById('nebulaCanvas');
+    const nebCtx = nebulaCanvas.getContext('2d');
+    const starsCanvas = document.getElementById('starsCanvas');
+    const starsCtx = starsCanvas.getContext('2d');
+    const galaxiesCanvas = document.getElementById('galaxiesCanvas');
+    const galCtx = galaxiesCanvas.getContext('2d');
+    const smokeCanvas = document.getElementById('smokeCanvas');
+    const smokeCtx = smokeCanvas.getContext('2d');
+    const meteorCanvas = document.getElementById('meteorCanvas');
+    const meteorCtx = meteorCanvas.getContext('2d');
+
+    let w, h;
+    let stars = [];
+    let smokeBlobs = [];
+    let galaxies = [];
+
+    class Star {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.radius = Math.random() * 1.5 + 0.5;
+        this.speed = (this.radius * 0.08) + 0.02;
+        this.opacity = Math.random() * 0.8 + 0.2;
+        this.twinkleDir = Math.random() > 0.5 ? 1 : -1;
+        this.twinkleSpeed = Math.random() * 0.01 + 0.003;
+        this.colorCycle = [
+          'rgba(200, 220, 255, OP)',
+          'rgba(255, 240, 200, OP)',
+          'rgba(255, 200, 200, OP)',
+          'rgba(200, 255, 220, OP)'
+        ];
+        this.colorIndex = Math.floor(Math.random() * this.colorCycle.length);
+      }
+      update() {
+        this.y -= this.speed;
+        if(this.y < 0) this.y = h;
+        this.opacity += this.twinkleDir * this.twinkleSpeed;
+        if (this.opacity >= 1) {
+          this.opacity = 1;
+          this.twinkleDir = -1;
+        } else if (this.opacity <= 0.2) {
+          this.opacity = 0.2;
+          this.twinkleDir = 1;
+          this.colorIndex = (this.colorIndex + 1) % this.colorCycle.length;
+        }
+      }
+      draw(ctx) {
+        const color = this.colorCycle[this.colorIndex].replace('OP', this.opacity.toFixed(2));
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.shadowColor = color;
+        ctx.shadowBlur = 8;
+        ctx.fill();
+      }
+    }
+
+    class Galaxy {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.radius = 20 + Math.random() * 40;
+        this.rotation = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 0.001 + 0.0005;
+        this.color = `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`;
+        this.alpha = 0.05 + Math.random() * 0.1;
+      }
+      update() {
+        this.rotation += this.speed;
+      }
+      draw(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+
+        const grd = ctx.createRadialGradient(0, 0, this.radius * 0.1, 0, 0, this.radius);
+        grd.addColorStop(0, this.color.replace(')', ', 0.8)'));
+        grd.addColorStop(0.5, this.color.replace(')', `, ${this.alpha * 2})`));
+        grd.addColorStop(1, this.color.replace(')', ', 0)'));
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, this.radius * 1.5, this.radius, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+      }
+    }
+
+    class SmokeBlob {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * w;
+        this.y = Math.random() * h;
+        this.radius = 150 + Math.random() * 150;
+        this.speedX = (Math.random() - 0.5) * 0.1;
+        this.speedY = (Math.random() - 0.5) * 0.1;
+        this.alpha = 0.03 + Math.random() * 0.08;
+        this.color = `hsla(${Math.floor(Math.random()*260)+220}, 70%, 60%, ALPHA)`;
+        this.alphaDirection = 1;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if(this.x < -this.radius) this.x = w + this.radius;
+        if(this.x > w + this.radius) this.x = -this.radius;
+        if(this.y < -this.radius) this.y = h + this.radius;
+        if(this.y > h + this.radius) this.y = -this.radius;
+
+        this.alpha += this.alphaDirection * 0.001;
+        if(this.alpha > 0.1) this.alphaDirection = -1;
+        if(this.alpha < 0.03) this.alphaDirection = 1;
+      }
+      draw(ctx) {
+        let gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.3, this.x, this.y, this.radius);
+        gradient.addColorStop(0, this.color.replace('ALPHA', this.alpha.toFixed(3)));
+        gradient.addColorStop(1, this.color.replace('ALPHA', '0'));
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(this.x, this.y, this.radius*1.3, this.radius, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawNebula(ctx, w, h, time) {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#0a001f';
+      ctx.fillRect(0, 0, w, h);
+
+      const layers = [
+        { x: w*0.3 + Math.sin(time*0.0007)*100, y: h*0.4 + Math.cos(time*0.0009)*110, radius: 400, color: 'rgba(60, 0, 100, 0.4)' },
+        { x: w*0.7 + Math.cos(time*0.001)*90, y: h*0.6 + Math.sin(time*0.0008)*100, radius: 350, color: 'rgba(0, 50, 150, 0.35)' },
+        { x: w*0.2 + Math.cos(time*0.0012)*120, y: h*0.7 + Math.sin(time*0.0006)*130, radius: 380, color: 'rgba(120, 0, 80, 0.3)' },
+        { x: w*0.8 + Math.sin(time*0.0006)*110, y: h*0.3 + Math.cos(time*0.0011)*120, radius: 320, color: 'rgba(20, 100, 120, 0.28)' },
+        { x: w*0.5 + Math.sin(time*0.0009)*70, y: h*0.2 + Math.cos(time*0.0007)*80, radius: 250, color: 'rgba(150, 50, 0, 0.25)' }
+      ];
+
+      layers.forEach(layer => {
+        const grd = ctx.createRadialGradient(layer.x, layer.y, 0, layer.x, layer.y, layer.radius);
+        grd.addColorStop(0, layer.color);
+        grd.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.ellipse(layer.x, layer.y, layer.radius*1.3, layer.radius, 0, 0, 2 * Math.PI);
+        ctx.fill();
+      });
+    }
+
+    function setup() {
+      w = window.innerWidth;
+      h = window.innerHeight;
+      nebulaCanvas.width = w;
+      nebulaCanvas.height = h;
+      starsCanvas.width = w;
+      starsCanvas.height = h;
+      galaxiesCanvas.width = w;
+      galaxiesCanvas.height = h;
+      smokeCanvas.width = w;
+      smokeCanvas.height = h;
+      meteorCanvas.width = w;
+      meteorCanvas.height = h;
+
+      stars = [];
+      for (let i = 0; i < 250; i++) {
+        stars.push(new Star());
+      }
+
+      smokeBlobs = [];
+      for (let i = 0; i < 20; i++) {
+        smokeBlobs.push(new SmokeBlob());
+      }
+
+      galaxies = [];
+      for (let i = 0; i < 8; i++) {
+        galaxies.push(new Galaxy());
+      }
+    }
+
+    function animate(time = 0) {
+      drawNebula(nebCtx, w, h, time);
+
+      galCtx.clearRect(0, 0, w, h);
+      galaxies.forEach(galaxy => {
+        galaxy.update();
+        galaxy.draw(galCtx);
+      });
+
+      smokeCtx.clearRect(0, 0, w, h);
+      smokeBlobs.forEach(blob => {
+        blob.update();
+        blob.draw(smokeCtx);
+      });
+
+      starsCtx.clearRect(0, 0, w, h);
+      stars.forEach(star => {
+        star.update();
+        star.draw(starsCtx);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', setup);
+
+    setup();
+    animate();
+
+    // === METEORITOS Y EFECTOS ÉPICOS ===
+    let meteors = [], explosionParticles = [], shockwaves = [], activeBlackHoles = [];
+    let activeMessages = []; // Para manejar múltiples mensajes "QUINTEROOOO"
+
+    let explodedCount = 0;
+
+    class Meteor {
+      constructor() { this.reset(); }
+
+      reset() {
+        this.x = Math.random() * window.innerWidth;
+        this.y = -Math.random() * 200 - 50;
+        this.radius = 10 + Math.random() * 8;
+        this.speed = 2.5 + Math.random() * 2;
+        this.dx = (Math.random() - 0.5) * 1.5;
+        this.exploding = false;
+        this.explosionRadius = 0;
+        this.maxExplosion = 200;
+        this.trail = [];
+        this.color = `hsl(${Math.random() * 40 + 10}, 100%, 50%)`;
+        this.spawnedBlackHole = false;
+        this.glow = 0;
+        this.spawnTimer = 0;
+      }
+
+      update() {
+        if (this.exploding) {
+          this.explosionRadius += 5;
+          this.glow += 5;
+          if (!this.spawnedBlackHole) {
+            spawnParticles(this.x, this.y);
+            createBlackHole(this.x, this.y);
+            shockwaves.push(new Shockwave(this.x, this.y));
+            this.spawnedBlackHole = true;
+
+            explodedCount++;
+            checkExplodedCount(this.x, this.y); // Pasa la posición al verificar el contador
+          }
+          if (this.explosionRadius > this.maxExplosion) {
+            this.reset();
+          }
+          return;
+        }
+
+        this.trail.push({ x: this.x, y: this.y, radius: this.radius });
+        if (this.trail.length > 35) this.trail.shift();
+
+        this.y += this.speed;
+        this.x += this.dx;
+
+        if (this.y > window.innerHeight + 100) this.reset();
+      }
+
+      draw(ctx) {
+        if (this.exploding) {
+          const grd = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.explosionRadius);
+          grd.addColorStop(0.0, "rgba(255,255,255,1)");
+          grd.addColorStop(0.1, "rgba(255,220,80,0.98)");
+          grd.addColorStop(0.3, "rgba(255,100,0,0.9)");
+          grd.addColorStop(0.5, "rgba(255,0,255,0.85)");
+          grd.addColorStop(0.7, "rgba(50,200,255,0.75)");
+          grd.addColorStop(0.9, "rgba(100,255,100,0.6)");
+          grd.addColorStop(1.0, "rgba(0,0,0,0)");
+          ctx.fillStyle = grd;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.explosionRadius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          for (let i = 0; i < this.trail.length; i++) {
+            const t = this.trail[i];
+            const alpha = i / this.trail.length;
+            const size = t.radius * (i / this.trail.length * 0.5 + 0.5);
+            ctx.beginPath();
+            ctx.arc(t.x, t.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, ${Math.floor(200 - alpha * 200)}, 0, ${alpha * 0.8})`;
+            ctx.fill();
+          }
+
+          const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.1, this.x, this.y, this.radius);
+          gradient.addColorStop(0, "white");
+          gradient.addColorStop(0.5, this.color);
+          gradient.addColorStop(1, `hsl(${Math.random() * 30 + 30}, 80%, 20%)`);
+
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = gradient;
+          ctx.shadowColor = `rgba(255, 150, 0, 1)`;
+          ctx.shadowBlur = 45 + this.glow;
+          ctx.fill();
+        }
+      }
+
+      isClicked(mx, my) {
+        return !this.exploding && Math.hypot(mx - this.x, my - this.y) < this.radius + 20;
+      }
+    }
+
+    class Shockwave {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.radius = 0;
+        this.alpha = 1;
+      }
+
+      update() {
+        this.radius += 10;
+        this.alpha -= 0.04;
+      }
+
+      draw(ctx) {
+        if (this.alpha <= 0) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
+    }
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x; this.y = y;
+        this.radius = Math.random() * 6 + 3;
+        this.angle = Math.random() * Math.PI * 2;
+        this.speed = Math.random() * 8 + 3;
+        this.alpha = 1;
+        this.color = `hsl(${Math.random() * 360}, 100%, 80%)`;
+        this.rotation = 0;
+        this.shape = Math.random() > 0.5 ? 'circle' : 'square';
+      }
+
+      update() {
+        for (let bh of activeBlackHoles) {
+          const dx = bh.x - this.x, dy = bh.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < bh.radius * 8 && dist > 1) {
+            const force = (1 / dist) * 5;
+            this.x += (dx / dist) * force;
+            this.y += (dy / dist) * force;
+            this.rotation += 0.5;
+          }
+        }
+
+        this.x += Math.cos(this.angle + this.rotation) * this.speed * 0.2;
+        this.y += Math.sin(this.angle + this.rotation) * this.speed * 0.2;
+        this.alpha -= 0.02;
+      }
+
+      draw(ctx) {
+        if (this.alpha <= 0) return;
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        if (this.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+          ctx.fill();
+        } else {
+          ctx.fillRect(this.x - this.radius / 2, this.y - this.radius / 2, this.radius, this.radius);
+        }
+        ctx.globalAlpha = 1;
+      }
+    }
+
+    class BlackHole {
+      constructor(x, y) {
+        this.x = x; this.y = y;
+        this.radius = 35;
+        this.createdAt = Date.now();
+        this.lifespan = 2000;
+      }
+
+      draw(ctx) {
+        const elapsed = Date.now() - this.createdAt;
+        const scale = 1 - elapsed / this.lifespan;
+        if (scale <= 0) return;
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius * scale * 1.8, 0, 2 * Math.PI);
+        ctx.strokeStyle = `rgba(255, 100, 255, ${scale * 0.7})`;
+        ctx.lineWidth = 8 * scale;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius * scale, 0, 2 * Math.PI);
+        ctx.fillStyle = `rgba(0, 0, 0, ${scale * 0.98})`;
+        ctx.shadowColor = 'rgba(255, 50, 255, 1)';
+        ctx.shadowBlur = 80 * scale;
+        ctx.fill();
+      }
+
+      isAlive() {
+        return Date.now() - this.createdAt < this.lifespan;
+      }
+    }
+
+    // Clase para el mensaje flotante "QUINTEROOOO"
+    class FloatingMessage {
+      constructor(x, y, text) {
+        this.x = x;
+        this.y = y;
+        this.text = text;
+        this.alpha = 1;
+        this.fontSize = 65; // Reducido de 80 a 65
+        this.lifespan = 180; // Duración en frames (3 segundos a 60fps)
+        this.currentFrame = 0;
+      }
+
+      update() {
+        this.currentFrame++;
+        this.y -= 1; // Se mueve ligeramente hacia arriba
+        this.alpha = 1 - (this.currentFrame / this.lifespan); // Se desvanece
+        this.fontSize += 0.3; // Crece un poco más lento para compensar el tamaño inicial
+      }
+
+      draw(ctx) {
+        if (this.alpha <= 0) return;
+        ctx.save();
+        ctx.font = `bold ${this.fontSize}px Orbitron, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+        ctx.shadowColor = 'yellow';
+        ctx.shadowBlur = 50 * this.alpha; // La sombra también se desvanece
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
+      }
+
+      isAlive() {
+        return this.alpha > 0;
+      }
+    }
+
+    function createBlackHole(x, y) {
+      activeBlackHoles.push(new BlackHole(x, y));
+    }
+
+    function spawnParticles(x, y) {
+      for (let i = 0; i < 120; i++) explosionParticles.push(new Particle(x, y));
+    }
+
+    function spawnMeteors(count = 3) { // Cantidad reducida de meteoritos
+      for (let i = 0; i < count; i++) meteors.push(new Meteor());
+    }
+
+    function checkExplodedCount(x, y) {
+      if (explodedCount === 9 || explodedCount === 12 || explodedCount === 15 || explodedCount === 18) {
+        activeMessages.push(new FloatingMessage(x, y, '¡QUINTEROOOO!'));
+      }
+    }
+
+    function updateMeteors() {
+      meteorCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+      activeBlackHoles.forEach(bh => bh.draw(meteorCtx));
+      activeBlackHoles = activeBlackHoles.filter(bh => bh.isAlive());
+
+      meteors.forEach(m => { m.update(); m.draw(meteorCtx); });
+      explosionParticles.forEach(p => p.update());
+      explosionParticles = explosionParticles.filter(p => p.alpha > 0);
+      explosionParticles.forEach(p => p.draw(meteorCtx));
+
+      shockwaves.forEach(w => w.update());
+      shockwaves = shockwaves.filter(w => w.alpha > 0);
+      shockwaves.forEach(w => w.draw(meteorCtx));
+
+      activeMessages.forEach(msg => msg.update());
+      activeMessages = activeMessages.filter(msg => msg.isAlive());
+      activeMessages.forEach(msg => msg.draw(meteorCtx));
+
+      if (meteors.length < 3) {
+        spawnMeteors(1);
+      }
+    }
+
+    function meteorLoop() {
+      updateMeteors();
+      requestAnimationFrame(meteorLoop);
+    }
+
+    meteorCanvas.addEventListener('click', e => {
+      const rect = meteorCanvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      meteors.forEach(m => {
+        if (m.isClicked(mx, my)) {
+          m.exploding = true;
+          m.explosionRadius = 0;
+        }
+      });
+    });
+
+    function resizeMeteorCanvas() {
+      meteorCanvas.width = window.innerWidth;
+      meteorCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeMeteorCanvas);
+    resizeMeteorCanvas();
+    spawnMeteors(3);
+    meteorLoop();
+
+  </script>
+
+</body>
+</html>

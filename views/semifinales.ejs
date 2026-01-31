@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Semifinales</title>
+  <link rel="stylesheet" href="/public/css/semifinales.css">
+  <style>
+    .penalty-inputs {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px solid #3a3a5a;
+    }
+
+    .penalty-inputs label {
+      margin-right: 10px;
+      font-weight: bold;
+      color: #00e0ff;
+    }
+
+    .penalty-inputs input[type="number"] {
+      width: 55px;
+      height: 45px;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ff4da6;
+      background-color: #0a192f;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 0 4px;
+      box-shadow: inset 0 0 5px #ff4da6;
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h2>Semifinales</h2>
+    <form method="POST" action="/semifinales">
+      <% semifinales.forEach((s, i) => { %>
+        <div class="match-card" id="match-<%= i %>">
+          <div class="team"><%= s.local.nombre %></div>
+          <div class="score-inputs">
+            <input type="number" name="goles_local_<%= i %>" required min="0" oninput="checkTie(<%= i %>)">
+            <span>-</span>
+            <input type="number" name="goles_visitante_<%= i %>" required min="0" oninput="checkTie(<%= i %>)">
+          </div>
+          <div class="team"><%= s.visitante.nombre %></div>
+
+          <div class="penalty-inputs" id="penales-<%= i %>" style="display: none;">
+            <input type="number" name="penales_local_<%= i %>" min="0">
+            <span>-</span>
+            <input type="number" name="penales_visitante_<%= i %>" min="0">
+          </div>
+        </div>
+      <% }) %>
+      <div class="submit-button">
+        <button type="submit">Confirmar ganadores</button>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    function checkTie(matchId) {
+      const form = document.getElementById(`match-${matchId}`);
+      const golesLocal = form.querySelector(`input[name="goles_local_${matchId}"]`).value;
+      const golesVisitante = form.querySelector(`input[name="goles_visitante_${matchId}"]`).value;
+      const penalesDiv = document.getElementById(`penales-${matchId}`);
+
+      if (golesLocal !== '' && golesVisitante !== '' && golesLocal === golesVisitante) {
+        penalesDiv.style.display = 'flex';
+        penalesDiv.querySelectorAll('input').forEach(input => input.required = true);
+      } else {
+        penalesDiv.style.display = 'none';
+        penalesDiv.querySelectorAll('input').forEach(input => {
+          input.required = false;
+          input.value = ''; // Limpia el valor si no hay empate
+        });
+      }
+    }
+  </script>
+</body>
+</html>

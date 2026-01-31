@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participantes del Torneo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/public/css/index.css">
+    <link rel="stylesheet" href="/public/css/common.css">
+    <style>
+        /* Estilos base */
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html, body {
+            height: auto !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            margin: 0 !important;
+        }
+
+        body {
+            margin-top: 80px !important; /* Para que el contenido no quede tapado por el header */
+            overflow: visible !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Estilos para la cuadrícula de participantes */
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        /* Estilos base para las tarjetas */
+        .participant-card {
+            background-color: #1e1e2f;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            overflow: hidden;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .participant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(255, 77, 166, 0.3);
+        }
+
+        .participant-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ff4da6;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
+        }
+            
+        .participant-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .participant-card h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+        }
+
+        .category {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+
+        .category-a {
+            background-color: #ff4da6;
+        }
+
+        .category-b {
+            background-color: #00bcd4;
+        }
+
+        .awards {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .awards span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: white;
+        }
+
+        .fa-trophy {
+            color: #ffc107;
+        }
+
+        .fa-medal {
+            color: #ffc107;
+        }
+
+        .fa-star {
+            color: #ffc107;
+        }
+
+        .silver-medal {
+            color: #c0c0c0 !important;
+            text-shadow: 0 0 5px rgba(192, 192, 192, 0.7);
+        }
+
+        .bronze-medal {
+            color: #cd7f32;
+        }
+
+        .card-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .card-actions button {
+            background: none;
+            border: 1px solid;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            color: #00bcd4;
+            border-color: #00bcd4;
+        }
+
+        .edit-btn:hover {
+            background-color: rgba(0, 188, 212, 0.1);
+        }
+
+        .delete-btn {
+            color: #ff4da6;
+            border-color: #ff4da6;
+        }
+
+        .delete-btn:hover {
+            background-color: rgba(255, 77, 166, 0.1);
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(90deg, #00bcd4, #ff4da6);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 2rem;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(255, 77, 166, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+
+        .modal-content {
+            background-color: #1e1e2f;
+            margin: 8% auto;
+            padding: 30px;
+            border: 1px solid #333;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #ff4da6;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            color: #00bcd4;
+            text-align: center;
+        }
+
+        .modal-content form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .modal-content form input,
+        .modal-content form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #0a192f;
+            color: white;
+        }
+
+        .modal-content form button {
+            background: linear-gradient(90deg, #00bcd4, #ff4da6);
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .modal-content form button:hover {
+            box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #00bcd4, #ff4da6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+        }
+
+        .no-participants {
+            text-align: center;
+            color: white;
+            grid-column: 1 / -1;
+            font-size: 1.2rem;
+        }
+
+        /* ====== DISEÑO ÉPICO PARA EL PRIMER PUESTO ====== */
+        .participant-card.first-place {
+            background: #000;
+            border: none;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
+            animation: throne-glow 2s infinite alternate;
+        }
+
+        /* Nuevo efecto de rayos SVG épicos */
+        .epic-lightning-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .epic-lightning-svg .ray {
+            stroke: gold;
+            stroke-width: 3.5;
+            filter: url(#glow);
+            opacity: 0;
+            animation: ray-strike 1.2s infinite;
+        }
+        .epic-lightning-svg .ray.ray2 {
+            stroke: #fff8b0;
+            stroke-width: 2.5;
+            animation-delay: 0.4s;
+        }
+        .epic-lightning-svg .ray.ray3 {
+            stroke: #ffd700;
+            stroke-width: 2.8;
+            animation-delay: 0.8s;
+        }
+        .epic-lightning-svg .ray.ray4 {
+            stroke: #fff;
+            stroke-width: 2.2;
+            animation-delay: 1.1s;
+        }
+        .epic-lightning-svg .flash {
+            opacity: 0;
+            animation: flash-blink 1.2s infinite;
+        }
+        .epic-lightning-svg .flash.flash2 { animation-delay: 0.6s; }
+        .epic-lightning-svg .flash.flash3 { animation-delay: 1s; }
+
+        @keyframes ray-strike {
+            0% { opacity: 0; }
+            10% { opacity: 1; }
+            30% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+            80% { opacity: 0; }
+            100% { opacity: 0; }
+        }
+        @keyframes flash-blink {
+            0%, 100% { opacity: 0; }
+            12% { opacity: 0.7; }
+            18% { opacity: 0.3; }
+            22% { opacity: 0; }
+        }
+
+        .participant-card.first-place::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, gold, #ffec80, gold) 1;
+            border-radius: 10px;
+            animation: border-glow 1.5s infinite alternate;
+            z-index: 2;
+        }
+
+        /* Corona dorada flotante mejorada */
+        .participant-card.first-place .crown {
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 60px;
+            z-index: 20;
+            color: gold;
+            background: linear-gradient(90deg, gold 40%, #fff8b0 60%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow:
+                0 0 25px gold,
+                0 0 40px #ffd700,
+                0 0 60px #fff8b0,
+                0 0 80px gold;
+            filter: drop-shadow(0 0 12px gold) drop-shadow(0 0 24px #ffd700);
+            animation:
+                crown-float 2s ease-in-out infinite alternate,
+                crown-glow 1.5s infinite alternate;
+        }
+        @keyframes crown-glow {
+            0% { text-shadow: 0 0 25px gold, 0 0 40px #ffd700, 0 0 60px #fff8b0, 0 0 80px gold; }
+            100% { text-shadow: 0 0 40px gold, 0 0 80px #ffd700, 0 0 120px #fff8b0, 0 0 160px gold; }
+        }
+
+        /* Foto de perfil girando como la copa */
+        .participant-card.first-place img {
+            border: 5px solid gold;
+            box-shadow: 
+                0 0 30px gold,
+                0 0 60px rgba(255, 215, 0, 0.7),
+                inset 0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+            z-index: 3;
+            animation: 
+                spin 4s linear infinite,
+                winner-glow 2s ease-in-out infinite alternate;
+            transform-style: preserve-3d;
+        }
+
+        /* Nombre del ganador */
+        .participant-card.first-place h2 {
+            font-size: 2rem;
+            color: #fff;
+            text-shadow: 
+                0 0 10px gold,
+                0 0 20px rgba(255, 215, 0, 0.5);
+            position: relative;
+            z-index: 3;
+            margin: 20px 0;
+            letter-spacing: 1px;
+            font-weight: 700;
+            background: linear-gradient(to right, gold, #fff8b0, gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            padding: 0 15px;
+        }
+
+        /* Categoría */
+        .participant-card.first-place .category {
+            background: linear-gradient(45deg, #8e6c00, #ffd700, #8e6c00);
+            color: #000;
+            font-weight: bold;
+            border: 2px solid gold;
+            position: relative;
+            z-index: 3;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px gold;
+            animation: category-pulse 2s infinite;
+        }
+
+        /* Premios */
+        .participant-card.first-place .awards {
+            position: relative;
+            z-index: 3;
+            margin-top: 25px;
+        }
+
+        .participant-card.first-place .fa-trophy {
+            color: gold;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+            animation: icon-spin 3s linear infinite;
+        }
+
+        .participant-card.first-place .fa-medal {
+            color: gold;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+        }
+
+        .participant-card.first-place .fa-star {
+            color: gold;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
+        }
+
+        /* Medalla plateada específica */
+        .participant-card.first-place .silver-medal {
+            color: #c0c0c0 !important;
+            filter: drop-shadow(0 0 5px rgba(192, 192, 192, 0.7));
+        }
+
+        /* Botones */
+        .participant-card.first-place .card-actions {
+            position: relative;
+            z-index: 3;
+            margin-top: 30px;
+        }
+
+        .participant-card.first-place .edit-btn {
+            color: gold;
+            border-color: gold;
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 10px gold;
+        }
+
+        .participant-card.first-place .delete-btn {
+            color: #ff4da6;
+            border-color: #ff4da6;
+            background: rgba(255, 77, 166, 0.1);
+        }
+
+        /* ====== 2º PUESTO ====== */
+        .participant-card.second-place {  
+            background: radial-gradient(120% 120% at 50% 50%, #2e0842 0%, #1a012d 55%, #0c0018 100%);  
+            border: 3px solid #6a0dad;  
+            box-shadow: 0 0 25px #6a0dad, inset 0 0 15px #3a0058;  
+            position: relative;  
+            z-index: 9;  
+            animation: pulse-dark-matter 3s infinite ease-in-out;  
+            overflow: hidden;  
+            isolation: isolate;
+        }
+
+        .participant-card.second-place::before {  
+            content: "";  
+            position: absolute;  
+            inset: -20%;  
+            border-radius: inherit;  
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, #d1b3ff 50%, transparent 51%),
+                radial-gradient(1.5px 1.5px at 65% 15%, #bfa9ff 50%, transparent 51%),
+                radial-gradient(1px 1px at 80% 60%, #8f75ff 50%, transparent 51%),
+                radial-gradient(1.5px 1.5px at 35% 75%, #aa93ff 50%, transparent 51%),
+                radial-gradient(1px 1px at 10% 50%, #e0d4ff 50%, transparent 51%);  
+            background-repeat: no-repeat;  
+            filter: drop-shadow(0 0 2px #6a0dad);  
+            opacity: .7;  
+            z-index: -1;  
+            will-change: transform;  
+            animation: star-pan 80s linear infinite;  
+            pointer-events: none;  
+        }
+
+        .participant-card.second-place::after {  
+            content: "";  
+            position: absolute;  
+            inset: -30%;  
+            border-radius: inherit;  
+            background: conic-gradient(from 0deg at 50% 50%,  
+                rgba(106,13,173,.28) 0%,  
+                rgba(0,0,0,0) 12%,  
+                rgba(75,0,130,.28) 25%,  
+                rgba(0,0,0,0) 38%,  
+                rgba(0,188,212,.18) 52%,  
+                rgba(0,0,0,0) 66%,  
+                rgba(255,77,166,.22) 80%,  
+                rgba(0,0,0,0) 92%,  
+                rgba(106,13,173,.28) 100%);  
+            mix-blend-mode: screen;  
+            filter: blur(22px) saturate(1.1);  
+            opacity: .85;  
+            z-index: -1;  
+            will-change: transform;  
+            animation: nebula-rotate 55s linear infinite;  
+            pointer-events: none;  
+        }
+
+        .participant-card.second-place img {  
+            border: 4px solid #6a0dad;  
+            box-shadow: 0 0 20px #4b0082;  
+            animation: floating-dark 4s ease-in-out infinite;  
+            filter: drop-shadow(0 0 10px #6a0dad);  
+        }  
+
+        .participant-card.second-place h2 {  
+            text-shadow: 0 0 8px #6a0dad, 0 0 15px #4b0082;  
+            font-size: 1.6rem;  
+            color: #d1b3ff;  
+            animation: flicker-text 2s infinite ease-in-out;  
+        }  
+
+        .participant-card.second-place .silver-medal {  
+            color: #d1b3ff !important;
+            filter: drop-shadow(0 0 5px rgba(209, 179, 255, 0.7));
+        }
+
+        /* ====== 3º PUESTO ====== */
+        .participant-card.third-place {  
+            background: linear-gradient(45deg, #1e1e2f, #2b1f0f);  
+            border: 3px solid #cd7f32;  
+            box-shadow: 0 0 10px #cd7f32, inset 0 0 8px #cd7f32;  
+            position: relative;  
+            z-index: 8;  
+            animation: pulse-bronze 3s infinite ease-in-out;  
+        }  
+
+        .participant-card.third-place img {  
+            border: 5px solid #cd7f32;  
+            box-shadow: 0 0 6px #cd7f32;  
+        }  
+
+        /* Animaciones clave */  
+        @keyframes lightning-strike {
+            0% {
+                top: -50%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.9;
+            }
+            20% {
+                opacity: 0.5;
+            }
+            30% {
+                opacity: 0.1;
+            }
+            100% {
+                top: 120%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        @keyframes throne-glow {
+            0% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 80px rgba(255, 215, 0, 0.9); }
+            100% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); }
+        }
+
+        @keyframes border-glow {
+            0% { box-shadow: 0 0 10px gold; opacity: 0.7; }
+            100% { box-shadow: 0 0 40px gold; opacity: 1; }
+        }
+
+        @keyframes winner-glow {
+            0% { box-shadow: 0 0 30px gold, 0 0 60px rgba(255, 215, 0, 0.5); }
+            100% { box-shadow: 0 0 50px gold, 0 0 90px rgba(255, 215, 0, 0.8); }
+        }
+
+        @keyframes category-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px gold; }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px gold; }
+        }
+
+        @keyframes icon-spin {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+
+        @keyframes crown-float {
+            0% { transform: translateX(-50%) translateY(0); }
+            100% { transform: translateX(-50%) translateY(5px); }
+        }
+
+        @keyframes pulse-dark-matter {  
+            0%, 100% { transform: scale(1); box-shadow: 0 0 25px #6a0dad, inset 0 0 15px #3a0058; }  
+            50% { transform: scale(1.02); box-shadow: 0 0 40px #6a0dad, inset 0 0 25px #3a0058; }  
+        }  
+
+        @keyframes star-pan {  
+            from { transform: translate3d(0,0,0); }  
+            to   { transform: translate3d(-120px, -140px, 0); }  
+        }  
+
+        @keyframes nebula-rotate {  
+            from { transform: rotate(0deg); }  
+            to   { transform: rotate(360deg); }  
+        }  
+
+        @keyframes floating-dark {  
+            0%, 100% { transform: translateY(0) scale(1); }  
+            50% { transform: translateY(-8px) scale(1.03); }  
+        }  
+
+        @keyframes flicker-text {  
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { text-shadow: 0 0 8px #6a0dad, 0 0 15px #4b0082; }  
+            20%, 24%, 55% { text-shadow: none; }  
+        }  
+
+        @keyframes pulse-bronze {  
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px #cd7f32; }  
+            50% { transform: scale(1.01); box-shadow: 0 0 15px #cd7f32, inset 0 0 12px #cd7f32; }  
+        }  
+
+        @keyframes rotate-border {  
+            0% { transform: rotate(0deg); }  
+            100% { transform: rotate(360deg); }  
+        }  
+
+        @keyframes floating {  
+            0%, 100% { transform: translateY(0); }  
+            50% { transform: translateY(-5px); }  
+        }
+
+        header.main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            height: 80px;
+            border-bottom: 2px solid #ff4da6;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="/public/images/pescado.png" class="logo-img" alt="Logo">
+        </div>
+            
+        <div class="nav-container">
+            <nav class="main-nav">
+                <div class="nav-links">
+                    <a href="/home" class="nav-link">
+                        <i class="fas fa-gamepad"></i>
+                        <span>JUGAR</span>
+                    </a>
+                    <a href="/participantes" class="nav-link active">
+                        <i class="fas fa-users"></i>
+                        <span>INTEGRANTES</span>
+                    </a>
+                    <a href="/apuestas" class="nav-link">
+                        <i class="fas fa-coins"></i>
+                        <span>APUESTAS</span>
+                    </a>
+                    <a href="/ruleta" class="nav-link">
+                        <i class="fas fa-dice"></i>
+                        <span>RULETA</span>
+                    </a>
+                </div>
+            </nav>
+                
+            <div class="nav-indicator"></div>
+        </div>
+            
+        <button class="menu-toggle" id="mobileMenuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <main>
+        <div class="container">
+            <h1>INTEGRANTES</h1>
+            <div class="participants-grid" id="participants-list">
+                <% if (participantes.length > 0) { %>
+                    <% participantes.forEach((participante, index) => { %>
+                        <%
+                            let cardClass = '';
+                            if (index === 0) {
+                                cardClass = 'first-place';
+                            } else if (index === 1) {
+                                cardClass = 'second-place';
+                            } else if (index === 2) {
+                                cardClass = 'third-place';
+                            }
+                        %>
+                        <div class="participant-card <%= cardClass %>" id="card-<%= participante.id %>"
+                            data-id="<%= participante.id %>" 
+                            data-nombre="<%= participante.nombre %>" 
+                            data-foto="<%= participante.foto %>"
+                            data-categoria="<%= participante.categoria %>"
+                            data-trofeos="<%= participante.trofeos %>"
+                            data-medallas="<%= participante.medallas %>"
+                            data-segundos_puestos="<%= participante.segundos_puestos %>"
+                            data-copas_liga="<%= participante.copas_liga %>">
+
+                            <% if (index === 0) { %>
+                                <div class="crown">👑</div>
+                                <!-- SVG Lightning Effect -->
+                                <svg class="epic-lightning-svg" viewBox="0 0 280 320">
+                                    <defs>
+                                        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                                            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+                                            <feMerge>
+                                                <feMergeNode in="coloredBlur"/>
+                                                <feMergeNode in="SourceGraphic"/>
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
+                                    <!-- Rayos irregulares -->
+                                    <polyline class="ray" points="40,0 60,60 30,120 80,180 60,260" />
+                                    <polyline class="ray ray2" points="140,0 130,80 170,140 120,200 150,300" />
+                                    <polyline class="ray ray3" points="220,0 200,70 250,130 210,200 230,270" />
+                                    <polyline class="ray ray4" points="90,40 100,100 80,160 120,220 110,290" />
+                                    <!-- Destellos -->
+                                    <circle class="flash" cx="60" cy="60" r="18" fill="gold" />
+                                    <circle class="flash flash2" cx="130" cy="80" r="14" fill="#fff8b0" />
+                                    <circle class="flash flash3" cx="200" cy="70" r="12" fill="#ffd700" />
+                                </svg>
+                            <% } %>
+
+                            <img src="/images/<%= participante.foto %>" alt="Foto de <%= participante.nombre %>" onerror="this.src='/images/default-avatar.png';">
+                            <h2><%= participante.nombre %></h2>
+                            <span class="category category-<%= participante.categoria.toLowerCase() %>">Categoría <%= participante.categoria %></span>
+                            <div class="awards">
+                                <span><i class="fas fa-star"></i> <%= participante.copas_liga %></span>
+                                <span><i class="fas fa-trophy"></i> <%= participante.trofeos %></span>
+                                <span><i class="fas fa-medal"></i> <%= participante.medallas %></span>
+                                <span><i class="fas fa-medal silver-medal"></i> <%= participante.segundos_puestos %></span>
+                            </div>
+                            <div class="card-actions">
+                                <button class="edit-btn" onclick="openEditModal('<%= participante.id %>')">Editar</button>
+                                <button class="delete-btn" onclick="deleteParticipant('<%= participante.id %>')">Borrar</button>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p class="no-participants">No hay participantes registrados. ¡Agrega el primero!</p>
+                <% } %>
+            </div>
+        </div>
+
+        <button class="fab" id="add-participant-button">+</button>
+
+        <!-- Formulario de edición/agregar (versión original) -->
+        <div id="participant-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-button">&times;</span>
+                <h2 id="modal-title">Agregar Nuevo Participante</h2>
+                <form id="participant-form" enctype="multipart/form-data">
+                    <input type="hidden" id="participant-id" name="id">
+
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                        
+                    <label for="foto_file">Foto:</label>
+                    <input type="file" id="foto_file" name="foto_file" accept="image/*">
+                    <input type="hidden" id="existing_photo" name="foto">
+
+                    <label for="categoria">Categoría:</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                    </select>
+                        
+                    <label for="copas_liga">Liga:</label>
+                    <input type="number" id="copas_liga" name="copas_liga" value="0" min="0" required>
+
+                    <label for="trofeos">Torneo:</label>
+                    <input type="number" id="trofeos" name="trofeos" value="0" min="0" required>
+
+                    <label for="medallas">Copa:</label>
+                    <input type="number" id="medallas" name="medallas" value="0" min="0" required>
+
+                    <label for="segundos_puestos">Segundos Puestos:</label>
+                    <input type="number" id="segundos_puestos" name="segundos_puestos" value="0" min="0" required>
+
+                    <button type="submit" id="form-submit-button">Agregar Participante</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navContainer = document.querySelector('.nav-container');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const navIndicator = document.querySelector('.nav-indicator');
+                
+            mobileMenuToggle.addEventListener('click', () => {
+                navContainer.classList.toggle('active');
+            });
+                
+            function moveIndicator(element) {
+                if (element) {
+                    const linkRect = element.getBoundingClientRect();
+                    const navRect = document.querySelector('.nav-links').getBoundingClientRect();
+                        
+                    navIndicator.style.width = `${linkRect.width}px`;
+                    navIndicator.style.left = `${linkRect.left - navRect.left}px`;
+                    navIndicator.style.opacity = '1';
+                }
+            }
+                
+            const activeLink = document.querySelector('.nav-link.active');
+            moveIndicator(activeLink);
+                
+            navLinks.forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    moveIndicator(link);
+                });
+                    
+                link.addEventListener('mouseleave', () => {
+                    moveIndicator(activeLink);
+                });
+                    
+                link.addEventListener('click', () => {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    moveIndicator(link);
+                        
+                    if (window.innerWidth <= 768) {
+                        navContainer.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const modal = document.getElementById('participant-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const form = document.getElementById('participant-form');
+        const submitButton = document.getElementById('form-submit-button');
+        const participantIdInput = document.getElementById('participant-id');
+        const participantsGrid = document.getElementById('participants-list');
+        const existingPhotoInput = document.getElementById('existing_photo');
+
+        document.getElementById('add-participant-button').addEventListener('click', () => {
+            form.reset();
+            participantIdInput.value = '';
+            existingPhotoInput.value = '';
+            modalTitle.innerText = 'Agregar Nuevo Participante';
+            submitButton.innerText = 'Agregar Participante';
+            modal.style.display = 'block';
+        });
+
+        document.querySelector('.close-button').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', e => e.target == modal && (modal.style.display = 'none'));
+
+        function openEditModal(id) {
+            const card = document.getElementById(`card-${id}`);
+            if (!card) return;
+
+            form.reset();
+            form.querySelector('#participant-id').value = id;
+            form.querySelector('#nombre').value = card.dataset.nombre;
+            form.querySelector('#categoria').value = card.dataset.categoria;
+            form.querySelector('#copas_liga').value = card.dataset.copas_liga;
+            form.querySelector('#trofeos').value = card.dataset.trofeos;
+            form.querySelector('#medallas').value = card.dataset.medallas;
+            form.querySelector('#segundos_puestos').value = card.dataset.segundos_puestos;
+            existingPhotoInput.value = card.dataset.foto;
+
+            modalTitle.innerText = 'Actualizar Estadísticas';
+            submitButton.innerText = 'Actualizar';
+            modal.style.display = 'block';
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+                
+            const id = participantIdInput.value;
+            const isEditing = !!id;
+            const url = isEditing ? `/participantes/actualizar/${id}` : '/participantes';
+
+            const formData = new FormData(form);
+                
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                });
+                    
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Error en la solicitud: ${response.status} - ${errorText}`);
+                }
+                    
+                const result = await response.json();
+                    
+                if (isEditing) {
+                    updateParticipantCard(id, result.participante);
+                    alert('Participante actualizado con éxito.');
+                } else {
+                    addNewParticipantCard(result.participante);
+                    alert('Participante agregado con éxito.');
+                }
+                    
+                modal.style.display = 'none';
+                form.reset();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo completar la operación: ' + error.message);
+            }
+        });
+
+        async function deleteParticipant(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar a este participante? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/participantes/eliminar/${id}`, {
+                    method: 'DELETE',
+                });
+                    
+                const result = await response.json();
+
+                if (response.ok) {
+                    const cardToRemove = document.getElementById(`card-${id}`);
+                    if (cardToRemove) cardToRemove.remove();
+                        
+                    if (document.querySelectorAll('.participant-card').length === 0) {
+                        participantsGrid.innerHTML = '<p class="no-participants">No hay participantes registrados. ¡Agrega el primero!</p>';
+                    }
+                        
+                    alert(result.message);
+                } else {
+                    throw new Error(result.error || 'Error al eliminar');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('No se pudo eliminar al participante.');
+            }
+        }
+            
+        function updateParticipantCard(id, data) {
+            const card = document.getElementById(`card-${id}`);
+            if (!card) return;
+
+            card.dataset.nombre = data.nombre;
+            card.dataset.foto = data.foto;
+            card.dataset.categoria = data.categoria;
+            card.dataset.copas_liga = data.copas_liga;
+            card.dataset.trofeos = data.trofeos;
+            card.dataset.medallas = data.medallas;
+            card.dataset.segundos_puestos = data.segundos_puestos;
+                
+            card.querySelector('h2').innerText = data.nombre;
+            card.querySelector('img').src = `/images/${data.foto}`;
+            const categorySpan = card.querySelector('.category');
+            categorySpan.innerText = `Categoría ${data.categoria}`;
+            categorySpan.className = `category category-${data.categoria.toLowerCase()}`;
+                
+            const awardsSpans = card.querySelectorAll('.awards span');
+            awardsSpans[0].innerHTML = `<i class="fas fa-star"></i> ${data.copas_liga}`;
+            awardsSpans[1].innerHTML = `<i class="fas fa-trophy"></i> ${data.trofeos}`;
+            awardsSpans[2].innerHTML = `<i class="fas fa-medal"></i> ${data.medallas}`;
+            awardsSpans[3].innerHTML = `<i class="fas fa-medal silver-medal"></i> ${data.segundos_puestos}`;
+        }
+
+        function addNewParticipantCard(participante) {
+            const noParticipantsMessage = participantsGrid.querySelector('p');
+            if (noParticipantsMessage) noParticipantsMessage.remove();
+
+            const newCardHtml = `
+                <div class="participant-card" id="card-${participante.id}" 
+                    data-id="${participante.id}" 
+                    data-nombre="${participante.nombre}" 
+                    data-foto="${participante.foto}"
+                    data-categoria="${participante.categoria}"
+                    data-trofeos="${participante.trofeos}"
+                    data-medallas="${participante.medallas}"
+                    data-segundos_puestos="${participante.segundos_puestos}"
+                    data-copas_liga="${participante.copas_liga}">
+
+                    <img src="/images/${participante.foto}" alt="Foto de ${participante.nombre}" onerror="this.src='/images/default-avatar.png';">
+                    <h2>${participante.nombre}</h2>
+                    <span class="category category-${participante.categoria.toLowerCase()}">Categoría ${participante.categoria}</span>
+                    <div class="awards">
+                        <span><i class="fas fa-star"></i> ${participante.copas_liga}</span>
+                        <span><i class="fas fa-trophy"></i> ${participante.trofeos}</span>
+                        <span><i class="fas fa-medal"></i> ${participante.medallas}</span>
+                        <span><i class="fas fa-medal silver-medal"></i> ${participante.segundos_puestos}</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="edit-btn" onclick="openEditModal('${participante.id}')">Editar</button>
+                        <button class="delete-btn" onclick="deleteParticipant('${participante.id}')">Borrar</button>
+                    </div>
+                </div>
+            `;
+            participantsGrid.insertAdjacentHTML('beforeend', newCardHtml);
+        }
+
+        window.openEditModal = openEditModal;
+        window.deleteParticipant = deleteParticipant;
+    </script>
+</body>
+</html>

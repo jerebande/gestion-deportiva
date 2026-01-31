@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background-color: #ff4081;
+}
+
+/* Contenido original de ruleta.css */
+body {
+    background-color: #121212; 
+    color: white;
+}
+
+.container {
+    padding: 40px;
+    text-align: center;
+}
+
+.input-section {
+    margin: 20px 0;
+}
+
+input[type="text"] {
+    padding: 10px;
+    width: 200px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    padding: 10px 15px;
+    margin-left: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff4da6;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    transition: background-color 1s ease;
+    background-color: #ff4081;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+li {
+    background-color: #333;
+    margin: 5px auto;
+    padding: 10px;
+    border-radius: 8px;
+    width: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li button {
+    background-color: red;
+    padding: 5px 10px;
+}
+
+li button:hover {
+    background-color: rgb(214, 2, 2);
+    transition: background-color 1s ease;
+}
+
+.girar {
+    background-color: #03a9f4;
+    font-size: 18px;
+}
+
+.girar:hover {
+    transition: background-color ease 1s;
+    background-color: #0289c8;
+}
+
+#resultado {
+    margin-top: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #4caf50;
+}

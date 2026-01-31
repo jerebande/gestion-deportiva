@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa de Apuestas</title>
+    <link rel="stylesheet" href="/public/css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos de Bootstrap y Font Awesome recreados */
+        :root {
+            --bs-blue: #0d6efd;
+            --bs-indigo: #6610f2;
+            --bs-purple: #6f42c1;
+            --bs-pink: #d63384;
+            --bs-red: #dc3545;
+            --bs-orange: #fd7e14;
+            --bs-yellow: #ffc107;
+            --bs-green: #198754;
+            --bs-teal: #20c997;
+            --bs-cyan: #0dcaf0;
+            --bs-white: #fff;
+            --bs-gray: #6c757d;
+            --bs-gray-dark: #343a40;
+            --bs-primary: #0d6efd;
+            --bs-secondary: #6c757d;
+            --bs-success: #198754;
+            --bs-info: #0dcaf0;
+            --bs-warning: #ffc107;
+            --bs-danger: #dc3545;
+            --bs-light: #f8f9fa;
+            --bs-dark: #212529;
+            --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+        
+        *, ::after, ::before {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body {
+            /* Cambio de color de fondo a un tono oscuro como en ruleta.css */
+            background-color: #121212;
+            color: white; /* Color del texto principal para ser legible */
+            font-family: var(--bs-font-sans-serif);
+            margin: 0;
+            padding-bottom: 30px;
+            margin-top: 80px; /* Igual al alto del header */
+        }
+
+        .container {
+            width: 100%;
+            padding-right: var(--bs-gutter-x, .75rem);
+            padding-left: var(--bs-gutter-x, .75rem);
+            margin-right: auto;
+            margin-left: auto;
+            max-width: 960px; /* Tamaño similar a md */
+            margin-top: 0;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            /* Adaptación del color y sombra de la tarjeta */
+            background-color: #333;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-clip: border-box;
+        }
+        .card-header {
+            /* Mantenemos el gradiente del header original, pero ajustamos el color de fondo */
+            background: linear-gradient(to right, #1a1a2e, #2a2a4a);
+            color: var(--bs-white);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ff4da6;
+            border-radius: 15px 15px 0 0;
+            margin-bottom: 0;
+        }
+        .card-title {
+            font-size: 2.2rem;
+            margin-bottom: 0;
+        }
+        .card-body {
+            padding: 30px;
+            background-color: #1a1a2e; /* Color más oscuro para el cuerpo */
+        }
+
+        .row {
+            --bs-gutter-x: 1.5rem;
+            --bs-gutter-y: 0;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: calc(-1 * var(--bs-gutter-y));
+            margin-right: calc(-.5 * var(--bs-gutter-x));
+            margin-left: calc(-.5 * var(--bs-gutter-x));
+        }
+
+        .row > * {
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 100%;
+            padding-right: calc(var(--bs-gutter-x) * .5);
+            padding-left: calc(var(--bs-gutter-x) * .5);
+            margin-top: var(--bs-gutter-y);
+        }
+
+        .col-md-6 { flex: 0 0 auto; width: 50%; }
+        .col-md-5 { flex: 0 0 auto; width: 41.66666667%; }
+        .col-md-4 { flex: 0 0 auto; width: 33.33333333%; }
+        .col-md-2 { flex: 0 0 auto; width: 16.66666667%; }
+        .col-4 { flex: 0 0 auto; width: 33.33333333%; }
+        .col-1 { flex: 0 0 auto; width: 8.33333333%; }
+        .col-md-6.mx-auto { margin-right: auto !important; margin-left: auto !important; }
+
+        .d-grid { display: grid; }
+        .gap-2 { gap: .5rem !important; }
+
+        .text-center { text-align: center !important; }
+        .fw-bold { font-weight: 700 !important; }
+        .text-muted { color: #aaa !important; /* Ajuste para el fondo oscuro */ }
+        .fs-1 { font-size: 2.5rem !important; }
+        .fs-3 { font-size: 1.75rem !important; }
+        .fs-4 { font-size: 1.5rem !important; }
+        .mb-2 { margin-bottom: 0.5rem !important; }
+        .mb-3 { margin-bottom: 1rem !important; }
+        .mb-4 { margin-bottom: 1.5rem !important; }
+        .my-4 { margin-top: 1.5rem !important; margin-bottom: 1.5rem !important; }
+        .mt-2 { margin-top: 0.5rem !important; }
+        .mt-3 { margin-top: 1rem !important; }
+        .mt-4 { margin-top: 1.5rem !important; }
+        .mt-5 { margin-top: 3rem !important; }
+        .p-3 { padding: 1rem !important; }
+        .align-items-center { align-items: center !important; }
+        .justify-content-center { justify-content: center !important; }
+        .justify-content-around { justify-content: space-around !important; }
+
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #ddd; /* Color de texto para el fondo oscuro */
+            display: inline-block;
+        }
+        .form-control, .form-select {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: white; /* Color del texto en el input */
+            background-color: #212529; /* Fondo oscuro para el input */
+            background-clip: padding-box;
+            border: 1px solid #555; /* Borde sutil */
+            border-radius: 8px;
+            appearance: none;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            margin-bottom: 1.5rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #ff4da6; /* Resaltar con el color de la ruleta */
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(255, 77, 166, 0.25);
+        }
+        .form-control-lg {
+            min-height: calc(1.5em + 1rem + 2px);
+            padding: .5rem 1rem;
+            font-size: 1.25rem;
+            border-radius: .5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #212529;
+            text-align: center;
+            text-decoration: none;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: .375rem .75rem;
+            font-size: 1rem;
+            border-radius: .25rem;
+            transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+        }
+
+        .btn-outline-success { color: #198754; border-color: #198754; }
+        .btn-outline-success:hover { color: #fff; background-color: #198754; border-color: #198754; }
+        .btn-sm { padding: .25rem .5rem; font-size: .875rem; border-radius: .2rem; }
+        .btn-success { background-color: #ff4da6; color: white; border-color: #ff4da6; }
+        .btn-success:hover { background-color: #ff4081; border-color: #ff4081; }
+        .btn-lg { padding: .5rem 1rem; font-size: 1.25rem; border-radius: .5rem; }
+
+        hr { margin: 1rem 0; color: inherit; border: 0; border-top: 1px solid; opacity: .25; }
+
+        /* Estilos personalizados */
+        .apostador-entry { background-color: #2a2a4a; transition: box-shadow 0.2s ease-in-out; }
+        .apostador-entry:hover { box-shadow: 0 0 10px rgba(255, 77, 166, 0.2); }
+        .btn-add-apostador { background-color: #4caf50; color: white; border: none; border-radius: 8px; padding: 10px 15px; cursor: pointer; transition: background-color 0.2s ease-in-out; }
+        .btn-add-apostador:hover { background-color: #388e3c; }
+        .card-participante {
+            min-height: 220px; padding: 20px; border: 1px solid #555; border-radius: 10px; background-color: #212529; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; transition: transform 0.1s ease-in-out, border-color 0.2s;
+        }
+        .card-participante:hover { transform: scale(1.02); }
+        .card-participante img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); }
+        .card-participante h5 { font-size: 1.3rem; margin-bottom: 0.3rem; color: #fff; }
+        .card-participante p { font-size: 0.9rem; color: #ccc; margin-bottom: 0.2rem; }
+        .card-participante p span { margin: 0 5px; }
+
+        #panel-apuesta { background-color: #212529; border: 1px solid #555; border-radius: 10px; padding: 25px; margin-top: 2rem; display: none; }
+        #goles-local, #goles-visitante { font-size: 1.5rem; font-weight: bold; }
+        #btn-verificar { background-color: #ff4da6; color: white; border: none; border-radius: 10px; padding: 15px 30px; font-size: 1.1rem; cursor: pointer; transition: background-color 0.2s ease-in-out; }
+        #btn-verificar:hover { background-color: #ff4081; }
+        #resultado-container { margin-top: 3rem; display: none; }
+        #marcador-final { font-size: 2rem; font-weight: bold; color: #ff4da6; }
+        #ganador-real { color: #4caf50; }
+        
+        .alert { border-radius: 8px; padding: 15px; margin-top: 1rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .alert-success { background-color: #1a2e1d; color: #4caf50; border-color: #388e3c; }
+        .alert-danger { background-color: #331a1a; color: #ff5252; border-color: #cc0000; }
+        .alert-warning { background-color: #332b1a; color: #ffc107; border-color: #ffc107; }
+        
+        .icon::before { font-family: 'Font Awesome 6 Free'; font-weight: 900; display: inline-block; margin-right: .5rem; }
+        .fa-users::before { content: "\f0c0"; } .fa-plus::before { content: "\2b"; } .fa-home::before { content: "\f015"; } .fa-flag::before { content: "\f024"; } .fa-spinner::before { content: "\f110"; } .fa-futbol::before { content: "\f1e3"; } .fa-check-circle::before { content: "\f058"; } .fa-trophy::before { content: "\f091"; } .fa-laugh-beam::before { content: "\f562"; } .fa-exclamation-triangle::before { content: "\f071"; } .fa-sad-tear::before { content: "\f581"; } .fa-handshake::before { content: "\f2b5"; }
+        .fa-spin { animation: fa-spin 2s linear infinite; }
+        @keyframes fa-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        header.main-header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; background: linear-gradient(135deg, #1a1a2e, #2a2a4a); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); z-index: 1000; height: 80px; border-bottom: 2px solid #ff4da6; }
+        
+        /* --- NUEVOS ESTILOS --- */
+        #vs-animado {
+            color: #ff4da6;
+            animation: epic-vs 2.5s infinite ease-in-out;
+        }
+        @keyframes epic-vs {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 5px #fff, 0 0 10px var(--bs-pink); }
+            50% { transform: scale(1.3); text-shadow: 0 0 15px #fff, 0 0 25px var(--bs-pink), 0 0 40px var(--bs-pink); }
+        }
+        
+        .apuesta-seleccion {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            border: 3px solid transparent;
+            border-radius: 10px;
+            padding: 8px;
+            transition: all 0.2s ease-in-out;
+            min-width: 80px;
+        }
+        .apuesta-seleccion:hover {
+            transform: translateY(-5px);
+            background-color: #2a2a4a;
+        }
+        .apuesta-seleccion.selected {
+            border-color: #ff4da6;
+            box-shadow: 0 0 15px rgba(255, 77, 166, 0.5);
+            background-color: #2a2a4a;
+        }
+        .apuesta-seleccion img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 5px;
+        }
+        .apuesta-seleccion .fa-handshake {
+            font-size: 35px;
+            margin-bottom: 5px;
+            color: #ccc;
+        }
+        .apuesta-seleccion span {
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Cinemática épica para ganador */
+        .cinematica-ganador {
+            background: linear-gradient(90deg, #ff4da6 0%, #ffe066 100%);
+            color: #212529;
+            border-radius: 12px;
+            padding: 25px 20px;
+            box-shadow: 0 0 30px 5px #ff4da688;
+            animation: winnerEpic 1.5s ease;
+            text-align: center;
+            font-weight: bold;
+        }
+        .epic-bg {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            animation: epicGlow 2s infinite alternate;
+        }
+        .epic-text {
+            font-size: 2rem;
+            margin-left: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #fff, 0 0 20px #ffe066;
+        }
+        .epic-nombre {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .epic-sub {
+            font-size: 1.1rem;
+            color: #212529;
+            margin-top: 8px;
+        }
+
+        @keyframes winnerEpic {
+            0% { transform: scale(0.7); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        @keyframes epicGlow {
+            0% { text-shadow: 0 0 10px #ff4da6, 0 0 20px #ffe066; }
+            100% { text-shadow: 0 0 30px #ff4da6, 0 0 40px #ffe066; }
+        }
+
+        /* Cinemática para perdedor */
+        .cinematica-perdedor {
+            background: linear-gradient(90deg, #212529 0%, #6c757d 100%);
+            color: #fff;
+            border-radius: 12px;
+            padding: 25px 20px;
+            box-shadow: 0 0 20px 2px #6c757d88;
+            animation: loserEpic 1.5s ease;
+            text-align: center;
+            font-weight: bold;
+        }
+        .fail-bg {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            animation: failShake 1.2s infinite alternate;
+        }
+        .fail-text {
+            font-size: 1.7rem;
+            margin-left: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #fff, 0 0 20px #6c757d;
+        }
+        .fail-nombre {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+        }
+        .fail-sub {
+            font-size: 1.1rem;
+            color: #fff;
+            margin-top: 8px;
+        }
+
+        @keyframes loserEpic {
+            0% { transform: scale(0.7); opacity: 0; }
+            80% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        @keyframes failShake {
+            0% { transform: rotate(-4deg); }
+            100% { transform: rotate(4deg); }
+        }
+
+        /* Centrado vertical del separador de marcador */
+        .col-1.text-center.fs-3 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 0;
+            font-size: 2rem !important;
+            /* NUEVO: ocupa el alto del input */
+        }
+        .row.align-items-center.justify-content-center.my-4 {
+            align-items: stretch !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container"> <img src="/public/images/pescado.png" class="logo-img" alt="Logo"> </div>
+        <div class="nav-container">
+            <nav class="main-nav">
+                <div class="nav-links">
+                    <a href="/home" class="nav-link "> <i class="fas fa-gamepad"></i> <span>JUGAR</span> </a>
+                    <a href="/participantes" class="nav-link "> <i class="fas fa-users"></i> <span>INTEGRANTES</span> </a>
+                    <a href="/apuestas" class="nav-link active"> <i class="fas fa-coins"></i> <span>APUESTAS</span> </a>
+                    <a href="/ruleta" class="nav-link "> <i class="fas fa-dice"></i> <span>RULETA</span> </a>
+                </div>
+            </nav>
+            <div class="nav-indicator"></div>
+        </div>
+        <button class="menu-toggle" id="mobileMenuToggle"> <i class="fas fa-bars"></i> </button>
+    </header>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header"> <h1 class="card-title"> ¡Apuestas! </h1> </div>
+            <div class="card-body">
+                                                                                                   
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="participante1" class="form-label fw-bold"><span class="icon fa-home"></span> Local:</label>
+                        <select id="participante1" class="form-select">            
+                            <option value=""> participantes...</option>
+                            <% participantes.forEach(p => { %> <option value="<%= p.id %>"><%= p.nombre %></option> <% }) %>
+                        </select>                                                     
+                    </div>
+                    <div class="col-md-6">
+                        <label for="participante2" class="form-label fw-bold"><span class="icon fa-flag"></span>  Visitante:</label>
+                        <select id="participante2" class="form-select">
+                            <option value=""> participantes...</option>
+                             <% participantes.forEach(p => { %> <option value="<%= p.id %>"><%= p.nombre %></option> <% }) %>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-4 align-items-center">
+                    <div class="col-md-5"> <div id="info-participante1" class="card card-participante"> <p class="text-muted"><span class="icon fa-spinner fa-spin"></span> Esperando selección...</p> </div> </div>
+                    <div id="vs-animado" class="col-md-2 text-center fs-1 fw-bold">VS</div>
+                    <div class="col-md-5"> <div id="info-participante2" class="card card-participante"> <p class="text-muted"><span class="icon fa-spinner fa-spin"></span> Esperando selección...</p> </div> </div>
+                </div>
+
+                <div id="panel-apuesta" class="border rounded p-3">
+                    <h4 class="text-center mb-3"><span class="icon fa-users"></span> Apostadores</h4>
+                    
+                    <div id="apostadores-container">
+                        <div class="apostador-entry mb-3 p-3 border rounded">
+                            <div class="row align-items-center">
+                                <div class="col-md-4"> <input type="text" class="form-control" placeholder="Nombre del Apostador 1" style="margin-bottom: 0;"> </div>
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-around align-items-center">
+                                        <div class="apuesta-seleccion" data-apuesta="local"> <img src="/images/placeholder.png" alt="Local"> <span class="nombre-local">Local</span> </div>
+                                        <div class="apuesta-seleccion" data-apuesta="empate"> <i class="fas fa-handshake"></i> <span>Empate</span> </div>
+                                        <div class="apuesta-seleccion" data-apuesta="visitante"> <img src="/images/placeholder.png" alt="Visitante"> <span class="nombre-visitante">Visitante</span> </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-add-apostador" class="btn btn-sm btn-outline-success mt-2"><span class="icon fa-plus"></span> Agregar Apostador</button>
+
+                    <hr class="my-4">
+
+                    <div class="row align-items-center justify-content-center my-4">
+                        <h4 class="text-center mb-3"><span class="icon fa-futbol"></span>  Resultado Final</h4>
+                        <div class="col-4"> <input type="number" id="goles-local" class="form-control form-control-lg text-center" min="0" placeholder="Local"> </div>
+                        <div class="col-1 text-center fs-3">-</div>
+                        <div class="col-4"> <input type="number" id="goles-visitante" class="form-control form-control-lg text-center" min="0" placeholder="Visitante"> </div>
+                    </div>
+
+                    <div class="d-grid gap-2 col-md-6 mx-auto mt-4"> <button id="btn-verificar" class="btn btn-success btn-lg"><span class="icon fa-check-circle"></span> Verificar Apuestas</button> </div>
+                </div>
+
+                <div id="resultado-container" class="mt-5 text-center">
+                    <hr class="my-4">
+                    <h2><span class="icon fa-trophy"></span> Resultado del Partido</h2>
+                    <p id="marcador-final" class="fs-1 fw-bold"></p>
+                    <p class="fs-4"> ganador :</p>
+                    <h3 class="fw-bold" id="ganador-real-container"><strong id="ganador-real"></strong></h3>
+                    <div id="resultados-apostadores-container" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+       </div>                                                                                                            
+
+    <script>
+        const participantes = <%- JSON.stringify(participantes) %>;
+        
+        const selectP1 = document.getElementById('participante1');
+        const selectP2 = document.getElementById('participante2');
+        const infoP1 = document.getElementById('info-participante1');
+        const infoP2 = document.getElementById('info-participante2');
+        const panelApuesta = document.getElementById('panel-apuesta');
+        const golesLocalInput = document.getElementById('goles-local');
+        const golesVisitanteInput = document.getElementById('goles-visitante');
+        const btnVerificar = document.getElementById('btn-verificar');
+        const resultadoContainer = document.getElementById('resultado-container');
+        const marcadorFinal = document.getElementById('marcador-final');
+        const ganadorReal = document.getElementById('ganador-real');
+        const apostadoresContainer = document.getElementById('apostadores-container');
+        const btnAddApostador = document.getElementById('btn-add-apostador');
+        const resultadosApostadoresContainer = document.getElementById('resultados-apostadores-container');
+        let apostadorCount = 1;
+
+        // Evento para manejar la selección de apuesta visual
+        apostadoresContainer.addEventListener('click', function(e) {
+            const seleccion = e.target.closest('.apuesta-seleccion');
+            if (!seleccion) return;
+
+            const entry = seleccion.closest('.apostador-entry');
+            const todasSelecciones = entry.querySelectorAll('.apuesta-seleccion');
+            
+            todasSelecciones.forEach(el => el.classList.remove('selected'));
+            seleccion.classList.add('selected');
+        });
+
+        btnAddApostador.addEventListener('click', () => {
+            if (apostadorCount < 4) {
+                apostadorCount++;
+                const newApostadorEntry = document.createElement('div');
+                newApostadorEntry.classList.add('apostador-entry', 'mb-3', 'p-3', 'border', 'rounded');
+                newApostadorEntry.innerHTML = `
+                    <div class="row align-items-center">
+                        <div class="col-md-4"> <input type="text" class="form-control" placeholder="Nombre del Apostador ${apostadorCount}" style="margin-bottom: 0;"> </div>
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-around align-items-center">
+                                <div class="apuesta-seleccion" data-apuesta="local"> <img src="/images/placeholder.png" alt="Local"> <span class="nombre-local">Local</span> </div>
+                                <div class="apuesta-seleccion" data-apuesta="empate"> <i class="fas fa-handshake"></i> <span>Empate</span> </div>
+                                <div class="apuesta-seleccion" data-apuesta="visitante"> <img src="/images/placeholder.png" alt="Visitante"> <span class="nombre-visitante">Visitante</span> </div>
+                            </div>
+                        </div>
+                    </div>`;
+                apostadoresContainer.appendChild(newApostadorEntry);
+                actualizarEtiquetasDeApuesta();
+            }
+            if (apostadorCount === 4) btnAddApostador.style.display = 'none';
+        });
+        
+        function actualizarEtiquetasDeApuesta() {
+            const p1 = participantes.find(p => p.id == selectP1.value);
+            const p2 = participantes.find(p => p.id == selectP2.value);
+            
+            document.querySelectorAll('.apostador-entry').forEach(entry => {
+                const imgLocal = entry.querySelector('[data-apuesta="local"] img');
+                const spanLocal = entry.querySelector('.nombre-local');
+                const imgVisitante = entry.querySelector('[data-apuesta="visitante"] img');
+                const spanVisitante = entry.querySelector('.nombre-visitante');
+
+                if (p1) {
+                    imgLocal.src = `/images/${p1.foto}`;
+                    spanLocal.textContent = p1.nombre.split(' ')[0]; // Primer nombre
+                } else {
+                    imgLocal.src = '/images/placeholder.png';
+                    spanLocal.textContent = 'Local';
+                }
+
+                if (p2) {
+                    imgVisitante.src = `/images/${p2.foto}`;
+                    spanVisitante.textContent = p2.nombre.split(' ')[0]; // Primer nombre
+                } else {
+                    imgVisitante.src = '/images/placeholder.png';
+                    spanVisitante.textContent = 'Visitante';
+                }
+            });
+        }
+
+        function actualizarUI() {
+            const id1 = selectP1.value;
+            const id2 = selectP2.value;
+
+            actualizarInfoParticipante(id1, infoP1);
+            actualizarInfoParticipante(id2, infoP2);
+            actualizarEtiquetasDeApuesta();
+
+            // Cambiar placeholders por nombres
+            const p1 = participantes.find(p => p.id == id1);
+            const p2 = participantes.find(p => p.id == id2);
+            golesLocalInput.placeholder = p1 ? p1.nombre.split(' ')[0] : 'Local';
+            golesVisitanteInput.placeholder = p2 ? p2.nombre.split(' ')[0] : 'Visitante';
+
+            if (id1 && id2 && id1 !== id2) {
+                panelApuesta.style.display = 'block';
+            } else {
+                panelApuesta.style.display = 'none';
+            }
+            resultadoContainer.style.display = 'none';
+        }
+        
+        function actualizarInfoParticipante(id, infoElement) {
+            if (!id) {
+                infoElement.innerHTML = '<p class="text-muted"><span class="icon fa-spinner fa-spin"></span> Esperando selección...</p>';
+                infoElement.style.borderColor = '#555';
+                return;
+            }
+            const participante = participantes.find(p => p.id == id);
+            infoElement.style.borderColor = '#ff4da6';
+            infoElement.innerHTML = `
+                <img src="/images/${participante.foto}" alt="Foto de ${participante.nombre}">
+                <h5 class="card-title">${participante.nombre}</h5>
+                <p class="card-text mb-1"><strong>Liga:</strong> ${participante.categoria}</p>
+                <p class="card-text mb-0">
+                    <span title="Copas de Liga">⭐ ${participante.copas_liga}</span> | 
+                    <span title="Copas">🏆 ${participante.trofeos}</span> | 
+                    <span title="Torneos">🥇 ${participante.medallas}</span> | 
+                    <span title="Subcampeonatos">🥈 ${participante.segundos_puestos}</span>
+                </p>`;
+        }
+
+        selectP1.addEventListener('change', actualizarUI);
+        selectP2.addEventListener('change', actualizarUI);
+
+        btnVerificar.addEventListener('click', () => {
+            const id1 = selectP1.value, id2 = selectP2.value;
+            const golesLocal = golesLocalInput.value, golesVisitante = golesVisitanteInput.value;
+
+            const apostadorEntries = document.querySelectorAll('.apostador-entry');
+            let todasLasApuestasHechas = true;
+            const apuestas = [];
+
+            apostadorEntries.forEach((entry, index) => {
+                const nombre = entry.querySelector('input').value || `Apostador Anónimo ${index + 1}`;
+                const seleccion = entry.querySelector('.apuesta-seleccion.selected');
+                
+                if (!seleccion) todasLasApuestasHechas = false;
+                
+                apuestas.push({ nombre, seleccion: seleccion ? seleccion.dataset.apuesta : null });
+            });
+
+            if (!todasLasApuestasHechas) { return alert("Error: Asegúrate de que cada apostador haya seleccionado un resultado."); }
+            if (golesLocal === '' || golesVisitante === '' || parseInt(golesLocal) < 0 || parseInt(golesVisitante) < 0) { return alert("Por favor, introduce un resultado final válido."); }
+
+            const golesLocalNum = parseInt(golesLocal), golesVisitanteNum = parseInt(golesVisitante);
+
+            let ganador = (golesLocalNum > golesVisitanteNum) ? 'local' : (golesVisitanteNum > golesLocalNum) ? 'visitante' : 'empate';
+
+            const pLocal = participantes.find(p => p.id == id1), pVisitante = participantes.find(p => p.id == id2);
+            
+            marcadorFinal.textContent = `${pLocal.nombre} ${golesLocalNum} - ${golesVisitanteNum} ${pVisitante.nombre}`;
+            
+            if (ganador === 'local') ganadorReal.textContent = pLocal.nombre;
+            else if (ganador === 'visitante') ganadorReal.textContent = pVisitante.nombre;
+            else ganadorReal.textContent = "¡Fue un empate!";
+            
+            resultadosApostadoresContainer.innerHTML = '';
+            apuestas.forEach(apuestaData => {
+                const div = document.createElement('div');
+                div.classList.add('mt-3');
+                const nombreApostador = `<strong>${apuestaData.nombre}</strong>`;
+
+                if (ganador === apuestaData.seleccion) {
+                    div.innerHTML = `
+                        <div class="cinematica-ganador">
+                            <div class="epic-bg">
+                                <span class="icon fa-trophy fa-spin"></span>
+                                <span class="epic-text">¡FELICIDADES!</span>
+                            </div>
+                            <div class="epic-nombre">${nombreApostador}</div>
+                            <div class="epic-sub">Has acertado tu apuesta y eres el ganador 🎉</div>
+                        </div>
+                    `;
+                    div.classList.add('cinematica-ganador');
+                } else {
+                    div.innerHTML = `
+                        <div class="cinematica-perdedor">
+                            <div class="fail-bg">
+                                <span class="icon fa-exclamation-triangle fa-shake"></span>
+                                <span class="fail-text">¡LO SENTIMOS!</span>
+                            </div>
+                            <div class="fail-nombre">${nombreApostador}</div>
+                            <div class="fail-sub">Tu apuesta no fue acertada. ¡Sigue intentando!</div>
+                        </div>
+                    `;
+                    div.classList.add('cinematica-perdedor');
+                }
+                resultadosApostadoresContainer.appendChild(div);
+            });
+
+            resultadoContainer.style.display = 'block';
+        });
+    </script>
+    <script>
+    // Script para manejar el menú móvil y efectos interactivos
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navContainer = document.querySelector('.nav-container');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const navIndicator = document.querySelector('.nav-indicator');
+        
+        // Toggle menú móvil
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', () => {
+                navContainer.classList.toggle('active');
+            });
+        }
+        
+        // Efecto indicador de navegación
+        function moveIndicator(element) {
+            if (element && navIndicator) {
+                const linkRect = element.getBoundingClientRect();
+                const navRect = element.closest('.nav-links').getBoundingClientRect();
+                
+                navIndicator.style.width = `${linkRect.width}px`;
+                navIndicator.style.left = `${linkRect.left - navRect.left}px`;
+                navIndicator.style.opacity = '1';
+            }
+        }
+        
+        const activeLink = document.querySelector('.nav-link.active');
+        if (activeLink) {
+            setTimeout(() => moveIndicator(activeLink), 100);
+        }
+        
+        navLinks.forEach(link => {
+            link.addEventListener('mouseenter', () => moveIndicator(link));
+            link.addEventListener('mouseleave', () => moveIndicator(activeLink));
+        });
+    });
+    </script>
+</body>
+</html>

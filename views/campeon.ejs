@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>¡Ganador!</title>
+  <link rel="stylesheet" href="/public/css/ganador.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      text-align: center;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      padding-top: 80px;
+    }
+
+    h1 {
+      font-size: 4em;
+      text-shadow: 0 0 25px gold, 0 0 55px orange;
+      margin-bottom: 40px;
+      animation: fadeInDown 1.5s ease-out;
+    }
+
+    .winner-name {
+      font-size: 3.8em;
+      font-weight: bold;
+      margin-bottom: 40px;
+      animation: fadeInUp 2s ease-out;
+      color: #ffd700;
+      text-shadow: 0 0 15px #f39c12, 0 0 35px #e67e22;
+    }
+
+    button {
+      font-size: 1.2em;
+      padding: 12px 28px;
+      background: linear-gradient(to right, #1abc9c, #16a085);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      position: relative;
+      z-index: 3;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: rgba(255,255,255,0.3);
+      transform: skewX(-25deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { left: -75%; }
+      50% { left: 125%; }
+      100% { left: 125%; }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <main class="container">
+    <h1>🏆 ¡Campeón del Torneo!</h1>
+    <div class="winner-name"><%= ganador.nombre %></div>
+    <button onclick="window.location.href='/home'">Volver al inicio</button>
+
+    <audio id="victory-audio" autoplay>
+      <source id="audio-source" src="" type="audio/mpeg">
+      Tu navegador no soporta audio.
+    </audio>
+  </main>
+
+  <!-- Confeti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Partículas -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <script>
+    // Música aleatoria
+    const canciones = [
+      "public/audio/SpotiMate.io - We Are The Champions - Remastered 2011 - Queen.mp3",
+      "public/audio/SpotiMate.io - I Want It All - Remastered 2011 - Queen.mp3",
+      "public/audio/SpotiMate.io - Back In Black - AC_DC.mp3",
+      "public/audio/SpotiMate.io - Don_t Stop Me Now - Remastered 2011 - Queen.mp3",
+      "public/audio/SpotiMate.io - The Trooper - 2015 Remaster - Iron Maiden.mp3",
+      "public/audio/SpotiMate.io - Highway to Hell - AC_DC.mp3",
+      "public/audio/SpotiMate.io - Welcome To The Jungle - Guns N_ Roses.mp3",
+      "public/audio/SpotiMate.io - Rock You Like A Hurricane - Scorpions.mp3",
+      "public/audio/SpotiMate.io - Smells Like Teen Spirit - Nirvana.mp3",
+      "public/audio/SpotiMate.io - Eye of the Tiger - Survivor.mp3"
+    ];
+
+    const audio = document.getElementById("victory-audio");
+    const source = document.getElementById("audio-source");
+    const cancionAleatoria = canciones[Math.floor(Math.random() * canciones.length)];
+    source.src = cancionAleatoria;
+    audio.load();
+    audio.play();
+
+    // Confeti
+    function lanzarConfeti() {
+      const end = Date.now() + 5000;
+      const colors = ['#bb0000', '#ffffff', '#f1c40f', '#27ae60', '#3498db'];
+
+      (function frame() {
+        confetti({
+          particleCount: 30,
+          angle: Math.random() * 360,
+          spread: 70,
+          origin: { x: Math.random(), y: Math.random() * 0.6 },
+          colors: colors,
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    }
+
+    lanzarConfeti();
+
+    // Partículas de fondo
+    particlesJS("particles-js", {
+      particles: {
+        number: { value: 90 },
+        color: { value: "#ffffff" },
+        shape: { type: "circle" },
+        opacity: { value: 0.3, random: true },
+        size: { value: 3, random: true },
+        move: { enable: true, speed: 1.2, direction: "none", out_mode: "out" }
+      },
+      interactivity: {
+        events: {
+          onhover: { enable: true, mode: "repulse" }
+        },
+        modes: {
+          repulse: { distance: 100 }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+</body>
+</html>
+
